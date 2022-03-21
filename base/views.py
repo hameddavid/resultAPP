@@ -15,11 +15,9 @@ from users.models import CustomUser
 def loginPage(request):
     if request.user.is_authenticated:
             return redirect('dashboard')
-
     if request.method == 'POST':
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
-
         try:
             user = CustomUser.objects.get(email=email) 
             user = authenticate(request, email=email, password=password)
