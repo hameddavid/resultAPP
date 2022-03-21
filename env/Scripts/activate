@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\xampp8.0.11-2\htdocs\result\pResult\env"
+VIRTUAL_ENV="C:\xampp7.4.27_ PHP 7.4.27\htdocs\resultAPP\env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

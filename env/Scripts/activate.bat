@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\xampp8.0.11-2\htdocs\result\pResult\env
+set VIRTUAL_ENV=C:\xampp7.4.27_ PHP 7.4.27\htdocs\resultAPP\env
 
 if not defined PROMPT set PROMPT=$P$G
 
