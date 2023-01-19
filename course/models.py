@@ -13,7 +13,7 @@ class Course(models.Model):
     register_flag = models.CharField(max_length=10,null=True,blank=True)
     deleted = models.CharField(max_length=1,null=True,blank=True)
     unit_id	= models.CharField(max_length=45,null=True,blank=True)
-        # last_updated_by_now = models.ForeignKey('users.CustomUser', on_delete=models.RESTRICT)
+        # last_updated_by_now = models.ForeignKey('users.User', on_delete=models.RESTRICT)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
@@ -27,10 +27,12 @@ class Course(models.Model):
 
 class LecturerCourse(models.Model):
     course = models.ForeignKey(Course, to_field='course_id', related_name='courses',on_delete=models.RESTRICT)
-    lecturer = models.ForeignKey('users.CustomUser', to_field='email', on_delete=models.RESTRICT)
-    status = models.PositiveIntegerField(default=0)
+    lecturer = models.ForeignKey('users.User', to_field='email', on_delete=models.RESTRICT)
+    status = models.CharField( max_length=10,blank=True, null=True, default=0)
     settings = models.ForeignKey('base.Setting', on_delete=models.RESTRICT)
-    time_approved = models.DateTimeField(auto_now_add=True)
+    approved_by = models.ForeignKey('users.User', related_name='LecturerCourse',blank=True,null=True, on_delete=models.RESTRICT)
+    approved_at = models.DateTimeField(auto_now_add=True)
+    approval_details = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -39,7 +41,7 @@ class LecturerCourse(models.Model):
         unique_together = ('course', 'lecturer','settings') 
 
     def __str__(self) -> str:
-        return self.course
+        return f"{self.course} - {self.lecturer}"
 
 
 

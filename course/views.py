@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from course.models import LecturerCourse, Course
-from users.models import CustomUser
+from users.models import User
 from base.models import Setting
 
 
@@ -19,7 +19,7 @@ def my_courses(request):
             settings = Setting.objects.get(status = 'ACTIVE')
             for course in request.POST.getlist('courses'): 
                 LecturerCourse.objects.create(course = Course.objects.get(course_id = course),
-                lecturer=CustomUser.objects.get(email='rafiua@run.edu.ng'),
+                lecturer=User.objects.get(email='rafiua@run.edu.ng'),
                 status=0,settings=settings)
         else:
             print("Not empty")

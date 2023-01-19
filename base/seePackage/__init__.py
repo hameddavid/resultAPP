@@ -1,0 +1,1 @@
+from .drf_fun_based_view import *

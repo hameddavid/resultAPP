@@ -20,5 +20,21 @@
         {% endblock content %}
     
         <script src="{% static 'js/libscripts.bundle.js' %}"></script>
+               <!-- JAVASCRIPT -->
+               <script src="{% static   'js/jquery/jquery.min.js' %}"></script>
+               <script src="{% static   'js/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+               <script src="{% static   'js/metismenu/metisMenu.min.js' %}"></script>
+               <script src="{% static   'js/simplebar/simplebar.min.js' %}"></script>
+               <script src="{% static   'js/node-waves/waves.min.js' %}"></script>
+               <script src="{% static   'js/select2/js/select2.min.js' %}"></script>
+               
+               <!-- App js -->
+               <script src="{% static   'js/pages/form-advanced.init.js' %}"></script>
+               <script src="{% static   'js/app.js' %}"></script>
+               <script src="{% static   'js/validation.min.js' %}"></script>
+
+        {% block scripts %}
+        
+        {% endblock scripts %}
     </body>
 </html>

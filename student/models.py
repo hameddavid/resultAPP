@@ -49,7 +49,7 @@ class Student(models.Model):
     hold_record = models.CharField(max_length=1,null=True,blank=True)
     run_mail_2 = models.CharField(max_length=191,null=True,blank=True)	
     gpa = models.FloatField(null=True,blank=True)
-    # last_updated_by_now = models.ForeignKey('users.CustomUser', on_delete=models.RESTRICT)
+    # last_updated_by_now = models.ForeignKey('users.User', on_delete=models.RESTRICT)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
