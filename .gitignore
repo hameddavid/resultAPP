@@ -5,13 +5,13 @@ bin-release/
 [Bb]in/
 
 
-env
+# env
 env1
 env311
 # Other files and folders
 .settings/
 
-/env
+# /env
 
 # Executables
 *.swf
