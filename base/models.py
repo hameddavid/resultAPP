@@ -140,7 +140,7 @@ class Setting(models.Model):
         ("NONE", "NONE"),
         ("ACTIVE", "ACTIVE")
     )
-
+     
     session = models.CharField(max_length=9, null=False, blank=False)
     semester_name = models.CharField(choices=semester_name_choices, max_length=50, null=False, blank=False)
     semester_code = models.IntegerField(choices=semester_code_choices, null=False, blank=False)
@@ -246,3 +246,15 @@ class Curriculum(models.Model):
 
 
 
+# ########################### Study Signal, bulk-create ... 
+class Product(models.Model):
+    name = models.CharField(max_length=150)
+    quantity = models.IntegerField()
+    week = models.IntegerField()
+    price = models.FloatField()
+
+class Sale(models.Model):
+    product = models.IntegerField()
+    week = models.IntegerField()
+    sales_amount = models.FloatField()
+# ###########################    #####################################

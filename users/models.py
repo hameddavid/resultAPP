@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -16,6 +17,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
+        # extra_fields.setdefault('semester_session_id', Setting.objects.get(id=1))
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
@@ -45,6 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     department = models.ForeignKey('undergraduate.Department',blank=True,null=True, on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, blank=True, null=True, unique=True)
     date_joined = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
@@ -73,11 +76,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     #     # Simplest possible answer: Yes, always
     #     return False
 
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All admins are staff
-        return self.is_admin
+    # @property
+    # def is_staff(self):
+    #     "Is the user a member of staff?"
+    #     # Simplest possible answer: All admins are staff
+    #     return self.is_admin
     
 
     @property

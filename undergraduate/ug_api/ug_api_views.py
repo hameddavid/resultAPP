@@ -5,146 +5,278 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
-from base.models import Setting
+from base.models import Setting,Staff
 from .ug_serializer import SettingSerializer
 from undergraduate.models import Faculty, Department,Programme,Student,Course,Curriculum,Registration,RegSummary
+
 import json
 from datetime import datetime
 
 
 
 
-class SettingApiView(APIView):
-    # add permission to check if user is authenticated
-    # permission_classes = [permissions.IsAuthenticated]
+# @login_required(login_url='index')
+# @api_view(['GET', 'POST'])
+# def loadJson(request):    
+#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/data_export_psql_19_01_2023/dept.json") as f:
+#         records = json.load(f)
 
-    # 1. List all
-    def get(self, request, *args, **kwargs):
-        '''
-        List all the todo items for given requested user
-        '''
-        # setting = Setting.objects.filter(user = request.user.id)
-        # setting = Setting.objects.filter(status='ACTIVE').first()
-        setting = Setting.objects.all()
-        serializer = SettingSerializer(setting, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     for record in records:   
 
-    # 2. Create
-    # def post(self, request, *args, **kwargs):
-    #     '''
-    #     Create the Todo with given todo data
-    #     '''
-    #     data = {
-    #         'task': request.data.get('task'), 
-    #         'completed': request.data.get('completed'), 
-    #         'user': request.user.id
-    #     }
-    #     serializer = TodoSerializer(data=data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-@login_required(login_url='index')
-@api_view(['GET', 'POST'])
-def loadJson(request): 
-    return   
-    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/PROG_CURR_DIFF.json") as f:
-        records = json.load(f)
-
-    for record in records:   
-
-        fac = Programme( 
-           programme_id = record['program'] ,
-           programme = record['program'] ,
-           department = Department.objects.filter(id=1).first(),
-           created = datetime.now(),
-            last_updated_by=request.user,
+#         fac = Department( 
+#             id = record['id'],
+#             department = record['department'],
+#             deleted = record['deleted'],
+#             created = record['created'],
+#             updated = record['updated'],
+#             faculty_id = record['faculty_id'],
+#             last_updated_by = request.user,
          
-            )
-        fac.save()
-        # return Response({'data':record})
+#             )
+#         fac.save()
+#         # return Response({'data':record})
     
-    return Response({'data':records[0:4]})
-
-@login_required(login_url='index')
-@api_view(['GET', 'POST'])
-def loadJson(request):    
-    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_REG_SUMMARY.json") as f:
-        records = json.load(f)
-
-    for record in records:   
-
-        fac = RegSummary( 
-           matric_number = record['matric_number'] if 'matric_number' in record.keys() else None,
-           semester = record['semester'] if 'semester' in record.keys() else None,
-           session_id = record['session_id'] if 'session_id' in record.keys() else None,
-           courses_taken = record['courses_taken'] if 'courses_taken' in record.keys() else None,
-           courses_passed = record['courses_passed'] if 'courses_passed' in record.keys() else None,
-           courses_failed = record['courses_failed'] if 'courses_failed' in record.keys() else None,
-           tnur = record['tnur'] if 'tnur' in record.keys() else None,
-           tnup = record['tnup'] if 'tnup' in record.keys() else None,
-           tnuf = record['tnuf'] if 'tnuf' in record.keys() else None,
-           ctnur = record['ctnur'] if 'ctnur' in record.keys() else None,
-           ctnup = record['ctnup'] if 'ctnup' in record.keys() else None,
-           ctcp = record['ctcp'] if 'ctcp' in record.keys() else None,
-           ctcup = record['ctcup'] if 'ctcup' in record.keys() else None,
-           cteup = record['cteup'] if 'cteup' in record.keys() else None,
-           wcrp = record['wcrp'] if 'wcrp' in record.keys() else None,
-           gpa = record['gpa'] if 'gpa' in record.keys() else None,
-           cgpa = record['cgpa'] if 'cgpa' in record.keys() else None,
-           acad_status = record['acad_status'] if 'acad_status' in record.keys() else None,
-           last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
-           last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
-           deleted = record['deleted'] if 'deleted' in record.keys() else None,
-      
-
-            last_updated_by_new=request.user,
-         
-            )
-        fac.save()
-        # return Response({'data':record})
-    
-    return Response({'data':records[0:4]})
+#     return Response({'data':records[0:4]})
 
 
 
 
 # @login_required(login_url='index')
 # @api_view(['GET', 'POST'])
-# def loadJson(request):   
-#     # return Response({'data':''}) 
-#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_REGISTRATION.json") as f:
+# def loadJson(request):    
+#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/data_export_psql_19_01_2023/prog.json") as f:
 #         records = json.load(f)
 
 #     for record in records:   
 
-#         fac = Registration( 
-#            matric_number_fk = Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
+#         fac = Programme( 
+#            programme_id = record['programme_id'] ,
+#            programme = record['programme'] ,
+#            department_id =  record['department_id'] ,
+#            deleted = record['deleted'],
+#            created = record['created'],
+#            updated = record['updated'],
+#            required_ctcup = record['required_ctcup'],
+#            required_cteup = record['required_cteup'],
+#            last_updated_by=request.user,
+         
+#             )
+#         fac.save()
+#         # return Response({'data':record})
+    
+#     return Response({'data':records[0:4]})
+
+
+
+
+
+
+
+# @api_view(['GET', 'POST'])
+# def loadJson(request):   
+#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/data_export_psql_19_01_2023/staff.json") as f:
+#         records = json.load(f)
+
+#     for record in records:   
+
+#         fac = Staff( 
+#          id=record['id'],
+#          userid=record['userid'],
+#          email=record['email'],
+#          phone=record['phone'],
+#          password=record['password'],
+#          profile_image=record['profile_image'],
+#          profile_image_small=record['profile_image_small'],
+#          staff_type=record['staff_type'],
+#          question=record['question'],
+#          answer=record['answer'],
+#          online=record['online'],
+#          activate=record['activate'],
+#          pwdreset=record['pwdreset'],
+#          lastupdate=record['lastupdate'],
+#          form_completed=record['form_completed'],
+#          retired=record['retired'],
+#          adjunct=record['adjunct'],
+#          disengaged=record['disengaged'],
+#          reason=record['reason'],
+#          r_date=record['r_date'],
+#          support_team=record['support_team'],
+#          research_output=record['research_output'],
+#          phd_output=record['phd_output'],
+#          msc_output=record['msc_output'],
+#          date=record['date'],
+#          c_address=record['c_address'],
+#          covenant=record['covenant'],
+#          cv=record['cv'],
+#          date_app_pubservice=record['date_app_pubservice'],
+#          date_app_uni=record['date_app_uni'],
+#          dob=record['dob'],
+#          email_status=record['email_status'],
+#          employment_type=record['employment_type'],
+#          firstname=record['firstname'],
+#          former_firstname=record['former_firstname'],
+#          former_lastname=record['former_lastname'],
+#          former_middlename=record['former_middlename'],
+#          gender=record['gender'],
+#          health=record['health'],
+#          hobbies=record['hobbies'],
+#          intercom=record['intercom'],
+#          ipbirth=record['ipbirth'],
+#          istate=record['istate'],
+#          landline=record['landline'],
+#          lastname=record['lastname'],
+#          leave_app=record['leave_app'],
+#          middlename=record['middlename'],
+#          mobile=record['mobile'],
+#          mstatus=record['mstatus'],
+#          myprofile=record['myprofile'],
+#          nationality=record['nationality'],
+#          office_phone=record['office_phone'],
+#          p_address=record['p_address'],
+#          p_email=record['p_email'],
+#          pob=record['pob'],
+#          poblga=record['poblga'],
+#          r_address=record['r_address'],
+#          sh_staff_no=record['sh_staff_no'],
+#          signature=record['signature'],
+#          staff_no=record['staff_no'],
+#          state_origin=record['state_origin'],
+#          title=record['title'],
+#          user_id=''
+#             )
+#         # fac.save()
+#         return Response({'data':records[0:4]})
+    
+#     return Response({'data':records[0:4]})
+
+
+
+
+# @login_required(login_url='index')
+# @api_view(['GET', 'POST'])
+# def loadJson(request):    
+#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/data_export_psql_19_01_2023/SETTINGS.json") as f:
+#         records = json.load(f)
+
+    # for record in records:   
+
+    #     fac = Setting( 
+    #         id = record['id'],
+    #         session = record['session'],
+    #         semester_name = record['semester_name'],
+    #         semester_code = record['semester_code'],
+    #         status = record['status'],
+    #         created = record['created'],
+    #         updated = record['updated'],
+    #         semester_open_close = False,
+         
+    #         )
+    #     fac.save()
+    #     # return Response({'data':record})
+    
+    # return Response({'data':records[0:4]})
+
+
+
+
+# @login_required(login_url='index')
+# @api_view(['GET', 'POST'])
+# def loadJson(request):    
+#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/data_export_psql_19_01_2023/faculty.json") as f:
+#         records = json.load(f)
+
+#     for record in records:   
+
+#         fac = Faculty( 
+#             id = record['id'],
+#             faculty = record['faculty'],
+#             deleted = record['deleted'],
+#             created = record['created'],
+#             updated = record['updated'],
+#             last_updated_by_old = 'toyo@gmail.com'  #request.user.email,
+         
+#             )
+#         fac.save()
+#         # return Response({'data':record})
+    
+#     return Response({'data':records[0:4]})
+
+
+# @login_required(login_url='index')
+# @api_view(['GET', 'POST'])
+# def loadJson(request):    
+#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_REG_SUMMARY.json") as f:
+#         records = json.load(f)
+
+#     for record in records:   
+
+#         fac = RegSummary( 
+#            matric_number = record['matric_number'] if 'matric_number' in record.keys() else None,
 #            semester = record['semester'] if 'semester' in record.keys() else None,
 #            session_id = record['session_id'] if 'session_id' in record.keys() else None,
-#            course_code = record['course_code'] if 'course_code' in record.keys() else None,
-#            status = record['status'] if 'status' in record.keys() else None,
-#            unit = Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit if Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit else 0,
-#            score = record['score'] if 'score' in record.keys() else None,
-#            grade = record['grade'] if 'grade' in record.keys() else None,
-#            last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
+#            courses_taken = record['courses_taken'] if 'courses_taken' in record.keys() else None,
+#            courses_passed = record['courses_passed'] if 'courses_passed' in record.keys() else None,
+#            courses_failed = record['courses_failed'] if 'courses_failed' in record.keys() else None,
+#            tnur = record['tnur'] if 'tnur' in record.keys() else None,
+#            tnup = record['tnup'] if 'tnup' in record.keys() else None,
+#            tnuf = record['tnuf'] if 'tnuf' in record.keys() else None,
+#            ctnur = record['ctnur'] if 'ctnur' in record.keys() else None,
+#            ctnup = record['ctnup'] if 'ctnup' in record.keys() else None,
+#            ctcp = record['ctcp'] if 'ctcp' in record.keys() else None,
+#            ctcup = record['ctcup'] if 'ctcup' in record.keys() else None,
+#            cteup = record['cteup'] if 'cteup' in record.keys() else None,
+#            wcrp = record['wcrp'] if 'wcrp' in record.keys() else None,
+#            gpa = record['gpa'] if 'gpa' in record.keys() else None,
+#            cgpa = record['cgpa'] if 'cgpa' in record.keys() else None,
+#            acad_status = record['acad_status'] if 'acad_status' in record.keys() else None,
 #            last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
+#            last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
 #            deleted = record['deleted'] if 'deleted' in record.keys() else None,
-#            unit_id = record['unit_id'] if 'unit_id' in record.keys() else None,
-#            app_user_id = record['app_user_id'] if 'app_user_id' in record.keys() else None, 
+      
 
 #             last_updated_by_new=request.user,
          
 #             )
 #         fac.save()
-        
-#         # return Response({'data':'testing'})
+#         # return Response({'data':record})
     
 #     return Response({'data':records[0:4]})
+
+
+
+
+@login_required(login_url='index')
+@api_view(['GET', 'POST'])
+def loadJson(request):   
+    # return Response({'data':''}) 
+    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_REGISTRATION.json") as f:
+        records = json.load(f)
+
+    for record in records:   
+
+        fac = Registration( 
+           matric_number_fk = Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
+           semester = record['semester'] if 'semester' in record.keys() else None,
+           session_id = record['session_id'] if 'session_id' in record.keys() else None,
+           course_code = record['course_code'] if 'course_code' in record.keys() else None,
+           status = record['status'] if 'status' in record.keys() else None,
+           unit = Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit if Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit else 0,
+           score = record['score'] if 'score' in record.keys() else None,
+           grade = record['grade'] if 'grade' in record.keys() else None,
+           last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
+           last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
+           deleted = record['deleted'] if 'deleted' in record.keys() else None,
+           unit_id = record['unit_id'] if 'unit_id' in record.keys() else None,
+           app_user_id = record['app_user_id'] if 'app_user_id' in record.keys() else None, 
+
+            last_updated_by_new=request.user,
+         
+            )
+        fac.save()
+        
+        # return Response({'data':'testing'})
+    
+    return Response({'data':records[0:4]})
 
 
 # @login_required(login_url='index')
@@ -156,7 +288,7 @@ def loadJson(request):
 #     for record in records:   
 
 #         fac = Curriculum( 
-#            program = record['prog_code'],
+#            programme_id = record['prog_code'],
 #            course_code = record['course_code'],
 #            status = record['status'],
 #            last_updated_by_old = record['last_updated_by'],
@@ -266,3 +398,40 @@ def loadJson(request):
 #         # return Response({'data':record})
     
 #     return Response({'data':records[0:4]})
+
+
+
+class SettingApiView(APIView):
+    # add permission to check if user is authenticated
+    # permission_classes = [permissions.IsAuthenticated]
+
+    # 1. List all
+    def get(self, request, *args, **kwargs):
+        '''
+        List all the todo items for given requested user
+        '''
+        # setting = Setting.objects.filter(user = request.user.id)
+        # setting = Setting.objects.filter(status='ACTIVE').first()
+        setting = Setting.objects.all()
+        serializer = SettingSerializer(setting, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # 2. Create
+    # def post(self, request, *args, **kwargs):
+    #     '''
+    #     Create the Todo with given todo data
+    #     '''
+    #     data = {
+    #         'task': request.data.get('task'), 
+    #         'completed': request.data.get('completed'), 
+    #         'user': request.user.id
+    #     }
+    #     serializer = TodoSerializer(data=data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+

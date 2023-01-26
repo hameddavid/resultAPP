@@ -33,50 +33,11 @@ def unique_user_otp_generator(len):
         return redirect('index')
 
 #
-def get_broadsheet_table(stud_reg,unique_courses):
-    unique_courses_header = get_formatted_header_query(unique_courses)
-    obj = ""
-    str_table = ''
-    str_table += get_page_header(obj)
-    str_table +="<table style='width:100%;border:1;border-collapse:collapse;'>"
-    head_tracker = 0
-    for main_index, stud in enumerate(stud_reg):
-        head_tracker +=1
-        tur = str(get_total_unit_reg_in_semester(stud.ug_reg_stud_related.all()) )
-        if tur != '0':
-             courses_score_dic = get_all_courses_in_dic(stud.ug_reg_stud_related.all())
-             if main_index == 0:
-                str_table +=get_table_header_row(unique_courses_header)
-             str_table += """
-        <tr style='border:0;'>
-            <td style='border:1px solid black; width:1%;'>"""+ str(main_index+1) +"""</td>
-            <td style='border:1px solid black; width:10%;'>"""+ stud.matric_number +"""</td>
-            <td style='border:1px solid black;width:30%;'>"""+ stud.surname+"""  """ +stud.firstname+"""</td>
-            <td style='border:1px solid black;width:2%;'>"""+tur+"""</td>"""
-
-             for ind,course in enumerate(unique_courses_header):
-                str_table +="""<td style='border:1px solid black;width:2%;'>"""+ str(get_score_for_current_course_header(courses_score_dic,course))+"""</td>""" 
-             str_table += """</tr> """
-             
-        if head_tracker == 21:
-            str_table += get_page_header(obj)
-            head_tracker = 0
- 
-    str_table += "</table>"
-    
-    t = Template(str_table)
-    c = Context({'test':stud_reg})
-    return t.render(c)
-
 def index(request):
     if request.user.is_authenticated:
             return redirect('dashboard')
-    stud_reg = Student.objects.prefetch_related(Prefetch('ug_reg_stud_related'
-    ,queryset=Registration.objects.filter(session_id='2020/2021', semester='2'))).filter(prog_code='STA',
-    current_level='400',status='CURRENT')
-    unique_courses = Registration.objects.filter(session_id='2020/2021', semester='1', matric_number_fk__in=stud_reg.values('matric_number')).values('course_code','unit','status').distinct('course_code')
-    
-    return render(request, 'user/login.html', context={'data':get_broadsheet_table(stud_reg,unique_courses)})
+   
+    return render(request, 'user/login.html')
 
 
 def userlogin(request):
@@ -85,54 +46,52 @@ def userlogin(request):
     if request.method == "GET":
         return render(request, 'user/login.html')
         
-    # try:
-    
-    if session_semester_config() is not None:
-        if not session_semester_config().semester_open_close:
-              messages.error(request, f'{session_semester_config().semester_name} {session_semester_config().session} ACADEMIC SESSION is not open')
-              return redirect('index')
-        email = request.POST.get('username').lower()
-        password = request.POST.get('password')
-        user = User.objects.filter(email=email).first()
-        if user is not None:
-                if user.semester_session_id == session_semester_config():
-                    auth = authenticate(request, email=email, password=password)
-                    if auth is not None:
-                        login(request,auth)
-                        if  f'"{session_semester_config()}.id"' not in user.role.keys():
-                             user.role[session_semester_config().id] = []
-                             user.save()
-                        request.session['settings'] = model_to_dict(session_semester_config())
-                        # Lecturer courses for this semester
-                        request.session['pendCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=0)).count()
-                        request.session['appCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=10)).count()
-                        return redirect('dashboard')
-                    else:
-                        messages.error(request, 'Invalid username/password (or inactive account)')
-                        return redirect('index')
-                else:
-                    messages.error(request, f"Kindly activate your account for {session_semester_config().semester_name} {session_semester_config()} academic session")
-                    user.otp = unique_user_otp_generator(6)
-                    user.save()
-                    helpers.semester_activation_email(user)
-                    return redirect('semester_activation')
-        else:
-           staff = Staff.objects.filter(email=email).first()
-           if staff is not None:
-              save_user = User.objects.create_user(email = email, password =password,is_active = False, semester_session_id=session_semester_config(),otp=unique_user_otp_generator(6))
-              save_user.save()
-              return redirect('otp')
-           else:
-             messages.error(request, "Wrong staff email supplied")
-             return redirect('index')
-    else:
-        messages.error(request, 'No active session/semester, contact Admin')
-        return redirect('index')
-         
-    # except:
-        # messages.error(request, 'User does not exist')
+    try:
+        if session_semester_config() is not None:
+            if not session_semester_config().semester_open_close:
+                return JsonResponse({'data':'','status':'Failed','message':f'{session_semester_config().semester_name} {session_semester_config().session} ACADEMIC SESSION is closed'}, safe=False)
+            email = request.POST.get('username').lower()
+            password = request.POST.get('password')
+            user = User.objects.filter(email=email).first()
+            if user is not None:
+                    if user.semester_session_id == session_semester_config():
+                        auth = authenticate(request, email=email, password=password)
+                        if auth is not None:
+                            login(request,auth)
+                            if  f'"{session_semester_config()}.id"' not in user.role.keys():
+                                user.role[session_semester_config().id] = []
+                                user.save()
+                            request.session['settings'] = model_to_dict(session_semester_config())
+                            # Lecturer courses for this semester
+                            request.session['pendCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=0)).count()
+                            request.session['appCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=10)).count()
+                            # return redirect('dashboard')
+                            return JsonResponse({'data':'','status':'success','message':'Login successful!'}, safe=False)
+                        else:
+                            return JsonResponse({'data':'','status':'Failed','message':'Invalid username/password (or inactive account)'}, safe=False)
 
-    # context = {}
+                    else:
+                        messages.error(request, f"Kindly activate your account for {session_semester_config().semester_name} {session_semester_config()} academic session")
+                        user.otp = unique_user_otp_generator(6)
+                        user.save()
+                        helpers.semester_activation_email(user)
+                        return redirect('semester_activation')
+            else:
+                staff = Staff.objects.filter(email=email).first()
+                if staff is not None:
+                    save_user = User.objects.create_user(email = email, password =password,is_active = False, semester_session_id=session_semester_config(),otp=unique_user_otp_generator(6))
+                    save_user.save()
+                    return redirect('otp')
+                else:
+                    return JsonResponse({'data':'','status':'Failed','message':'Wrong staff email supplied'}, safe=False)
+
+        else:
+            messages.error(request, 'No active session/semester, contact Admin')
+            return redirect('index')
+            
+    except:
+        messages.error(request, 'User does not exist')
+
     return redirect('index')
 
 
@@ -180,6 +139,23 @@ def validateOtp(request):
 
 
 
+
+def display_class_master_sheet_exam(request):
+    # prog_code , level, session_id, semester
+    #  CMP 400 , HIS 300, 400, ACC 300
+    stud_reg = Student.objects.prefetch_related(Prefetch('ug_reg_stud_related'
+    ,queryset=Registration.objects.filter(session_id='2021/2022', semester='2'))).filter(prog_code='ACC',
+    current_level='300',status='CURRENT').order_by('matric_number')
+    
+    unique_courses = Registration.objects.filter(session_id='2021/2022', semester='2',
+    matric_number_fk__in=[mats['matric_number'] for mats in stud_reg.values('matric_number')]).values('course_code',
+    'unit','status','unit_id').distinct('course_code')
+    course_desc = Course.objects.filter(course_code__in=[el['course_code'] for el in unique_courses]).order_by('course_code').distinct('course_code')
+    
+   
+    return render(request, 'user/master_sheet.html', context={'data':get_broadsheet_table(stud_reg, unique_courses, course_desc, request)})
+
+
 def get_total_unit_reg_in_semester(query):
     unit = 0
     for rec in query:
@@ -192,8 +168,6 @@ def get_all_courses_in_dic(courses):
         list_courses[course.course_code] = course.score
     return list_courses
 
-def get_score_for_course_header(courses_score_dic,unique_courses_header):
-    pass
 
 def get_formatted_header_query(query):
     res_list = []
@@ -204,6 +178,21 @@ def get_formatted_header_query(query):
             track_list.append(q['course_code'])
     return res_list
 
+def get_unique_courses_desc(query):
+    res_list = []
+    track_list = []
+    for q in query:
+        if q.course_code not in track_list:
+            res_list.append({'course_code':q.course_code,'course_title':q.course_title})
+            track_list.append(q.course_code)
+    res = """<table class="result_table"> 
+            <tr><th style="text-align: left" >SN</th><th style="text-align: left">Course Code</th><th style="text-align: left">Course Title</th></tr>
+       """
+    if len(res_list) > 0:
+        for index, row in enumerate(res_list, start=1):
+            res += """<tr><td>"""+ str(index)+"""</td><td>"""+row['course_code']+"""</td><td>"""+row['course_title']+"""</td></tr>"""
+    res +="</table>"
+    return res
 
 def get_score_for_current_course_header(courses_score_dic,course):
      if course['course_code'] in courses_score_dic.keys():
@@ -211,24 +200,91 @@ def get_score_for_current_course_header(courses_score_dic,course):
      return ''
 
 def get_table_header_row(unique_courses_header):      
-       table_header = """<tr style='border:1px solid black;'>
-       <td style='border:1px solid black; width:1%;'> SN</td>
-       <td style='border:1px solid black; width:10%;'>Matric Number</td>
-       <td style='border:1px solid black;width:22%;'>Names</td>
-       <td style='border:1px solid black;width:2%;'>TUR</td>
+       table_header = """<tr >
+       <th > SN</th>
+       <th >Matric Number</th>
+       <th >Names</th>
+       <th >TUR</th>
         """
        for obj in unique_courses_header:
-           table_header+= """<td style='border:1px solid black; width:2%;'>"""+ str(obj['course_code'])+ str(obj['unit'])+str(obj['status']) +"""</td>"""
+           table_header+= """<th valign="top" >
+           """+  str(obj['course_code'])+""" <h6 > """+ str(obj['unit'])+"""</h6><h6 ">
+           """ +str(obj['status']) +"""</h6></th>"""
        table_header += """</tr>"""
        return table_header
 
 
-def get_page_header(obj):
-    test = "<h2>Redeemer's University</h2>"
-    return  """ <tr style='border:1px solid black;'>
-            <td colspan='50' style=' width:1%;'>"""+ test +"""</td>
-            </tr>
-            """
+def get_page_header(request):
+    val1 = '2019/2020'.split('/')
+    val2 = session_semester_config().session.split('/')
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    print(int(val2[1]) - int(val1[1]))
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    details = {'faculty':'SMS', 'department':'Economics','program':'Economics','level':'200','semester':'1','session':'2020/2021'}
+
+    return  """   <div class="page"> {% load static %}
+            <div class="header">
+                <img src="{% static '/images/run_logo_big.png'%}" class="logo"/>
+		<h1>REDEEMER\'S UNIVERSITY</h1>
+		<h5>MASTER SHEET FOR PRESENTATION OF EXAMINATION RESULTS</h5>
+         <table>
+		    <tr>
+			<td style="text-align: left">FACULTY OF: <strong>""" + details["faculty"] + """</strong></td>
+			<td style="text-align: left">Department OF: <strong>""" + details["department"] + """</strong></td>
+		    </tr>
+		    <tr>
+			<td style="text-align: left">PROGRAMME: <strong>""" + details["program"] + """</strong></td>
+			<td style="text-align: left">LEVEL: <strong>""" + details["level"] + """</strong></td>
+		    </tr>
+		    <tr>
+			<td style="text-align: left">SESSION: <strong>""" + details["session"] + """</strong></td>
+			<td style="text-align: left">SEMESTER: <strong>""" + details["semester"] + """</strong></td>
+		    </tr>
+		</table>
+	    </div>
+            <div class="header2">
+       
+	    </div>"""
+            
+
+
+
+def get_broadsheet_table(stud_reg, unique_courses, course_desc, request):
+    unique_courses_header = get_formatted_header_query(unique_courses)
+    str_table = ''
+    str_table += get_page_header(request)
+    head_tracker = 0
+    sn = 0
+    for main_index, stud in enumerate(stud_reg, start=1): 
+        tur = str(get_total_unit_reg_in_semester(stud.ug_reg_stud_related.all()) )
+        if main_index == 1:
+                str_table += """<table class="result_table" >"""
+                str_table +=get_table_header_row(unique_courses_header)
+        if tur != '0':
+             head_tracker +=1
+             sn +=1
+             firstName = stud.firstname.split(' ')
+             courses_score_dic = get_all_courses_in_dic(stud.ug_reg_stud_related.all())
+             str_table += """ <tr >
+            <td style="text-align: left">"""+ str(sn) +"""</td>
+            <td style="text-align: left">"""+ stud.matric_number +"""</td>
+            <td style="text-align: left">"""+ stud.surname+"""  """ +firstName[0]+"""</td>
+            <td style="text-align: center">"""+tur+"""</td>"""
+             for ind,course in enumerate(unique_courses_header):
+                str_table +="""<td style="text-align: center;">"""+ str(get_score_for_current_course_header(courses_score_dic,course))+"""</td>""" 
+             str_table += """</tr> """  
+        # print(f"{main_index} {stud_count}")
+        if main_index != stud_reg.count():
+            print(f"{main_index}")
+            if head_tracker == 20:
+                str_table += """</table></div></br></br>""" 
+                str_table +=get_page_header(request)+"""<table class="result_table">"""+get_table_header_row(unique_courses_header)
+                head_tracker = 0
+        else: str_table += """</table></div></br>"""+get_unique_courses_desc(course_desc)
+    str_table += "</table>" 
+    t = Template(str_table)
+    c = Context({'test':stud_reg})
+    return t.render(c)
 
 
 
@@ -244,9 +300,62 @@ def get_page_header(obj):
 
 
 
+# def userlogin(request):
+#     if request.user.is_authenticated:
+#             return redirect('dashboard')
+#     if request.method == "GET":
+#         return render(request, 'user/login.html')
+        
+#     # try:
+    
+#     if session_semester_config() is not None:
+#         if not session_semester_config().semester_open_close:
+#             #   messages.error(request, f'{session_semester_config().semester_name} {session_semester_config().session} ACADEMIC SESSION is closed')
+#             #   return redirect('index')
+#             return JsonResponse({'status':'Failed','message':f'{session_semester_config().semester_name} {session_semester_config().session} ACADEMIC SESSION is closed'}, safe=False)
+#         email = request.POST.get('username').lower()
+#         password = request.POST.get('password')
+#         user = User.objects.filter(email=email).first()
+#         if user is not None:
+#                 if user.semester_session_id == session_semester_config():
+#                     auth = authenticate(request, email=email, password=password)
+#                     if auth is not None:
+#                         login(request,auth)
+#                         if  f'"{session_semester_config()}.id"' not in user.role.keys():
+#                              user.role[session_semester_config().id] = []
+#                              user.save()
+#                         request.session['settings'] = model_to_dict(session_semester_config())
+#                         # Lecturer courses for this semester
+#                         request.session['pendCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=0)).count()
+#                         request.session['appCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=10)).count()
+#                         return redirect('dashboard')
+#                     else:
+#                         messages.error(request, 'Invalid username/password (or inactive account)')
+#                         return redirect('index')
+#                 else:
+#                     messages.error(request, f"Kindly activate your account for {session_semester_config().semester_name} {session_semester_config()} academic session")
+#                     user.otp = unique_user_otp_generator(6)
+#                     user.save()
+#                     helpers.semester_activation_email(user)
+#                     return redirect('semester_activation')
+#         else:
+#            staff = Staff.objects.filter(email=email).first()
+#            if staff is not None:
+#               save_user = User.objects.create_user(email = email, password =password,is_active = False, semester_session_id=session_semester_config(),otp=unique_user_otp_generator(6))
+#               save_user.save()
+#               return redirect('otp')
+#            else:
+#              messages.error(request, "Wrong staff email supplied")
+#              return redirect('index')
+#     else:
+#         messages.error(request, 'No active session/semester, contact Admin')
+#         return redirect('index')
+         
+#     # except:
+#         # messages.error(request, 'User does not exist')
 
-
-
+#     # context = {}
+#     return redirect('index')
 
 
 
