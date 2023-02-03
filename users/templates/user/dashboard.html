@@ -98,33 +98,46 @@
                         </div>
                         <div class="col-md-12 col-lg-4 col-xl-5 col-xxl-5">
                             <div class="alert alert-primary p-3 mb-0 w-100">
-                                <h6 class="fw-bold mb-1">Roles</h6>
+                                <h6 class="fw-bold mb-1">Roles {{request.user.role}}</h6>
                                 <p class="small mb-4">Check the box</p>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="lecturer" checked disabled>
-                                    <label class="form-check-label" for="lecturer">
-                                        Lecturer
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="adviser">
-                                    <label class="form-check-label" for="adviser">
-                                        Level Adviser
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="officer">
-                                    <label class="form-check-label" for="officer">
-                                        Exam Officer
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="hod">
-                                    <label class="form-check-label" for="hod">
-                                        HOD
-                                    </label>
-                                </div>
-                                <button class="btn btn-primary mt-2">Update Role</button>
+                                <form method="post" id="formSubmitRole">
+                                    {% csrf_token %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="lecturer" name="roles[]" id="lecturer">
+                                        <label class="form-check-label" for="lecturer">
+                                            Lecturer
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="adviser" name="roles[]" id="adviser">
+                                        <label class="form-check-label" for="adviser">
+                                            Level Adviser
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="officer" name="roles[]" id="officer">
+                                        <label class="form-check-label" for="officer">
+                                            Exam Officer
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="hod" name="roles[]" id="hod">
+                                        <label class="form-check-label" for="hod">
+                                            HOD
+                                        </label>
+                                    </div>
+                                    <div class="mb-2">
+                                        <select class="form-control form-control-md" name="programme" id="programme">
+                                            <option value="">Select Programme</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-2">
+                                        <select class="form-control form-control-md" name="department" id="department">
+                                            <option value="">Select Department</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" id="btnSubmitRole" class="btn btn-primary mt-2">Update Role</button>
+                                </form>
                             </div>
                         </div>
                     </div><!-- Row End -->
@@ -140,6 +153,7 @@
     <!-- Jquery Page Js -->
     <script src="{% static 'js/template.js' %}"></script>
     <script src="{% static 'js/index.js' %}"></script>
+    <script src="{% static 'js/functions.js' %}"></script>
 <!-- @endsection -->
 {% endblock content %}
 

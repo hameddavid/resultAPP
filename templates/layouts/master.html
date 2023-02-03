@@ -15,8 +15,9 @@
     <link rel="stylesheet" href="{% static 'styles/my-task.style.min.css' %}">
     <!-- Jquery Core Js -->
     <script src="{% static 'js/libscripts.bundle.js' %}"></script>
+    <script src="{% static 'js/blockUI.js' %}"></script>
 </head>
-<body>
+<body onload='checkInfo()'>
     <!-- @yield('content') -->
     {% block content %}
 
@@ -52,6 +53,13 @@
                 //$('.collapse').removeClass('show').addClass('show');
             }
         });
+    </script>
+    <script>
+        const checkInfo = () => {
+            $(document).ready(function ($) {
+                //$.blockUI()
+            });
+        }
     </script>
 </body>
 </html> 
