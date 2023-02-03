@@ -202,81 +202,82 @@ from datetime import datetime
 #     return Response({'data':records[0:4]})
 
 
-# @login_required(login_url='index')
-# @api_view(['GET', 'POST'])
-# def loadJson(request):    
-#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_REG_SUMMARY.json") as f:
-#         records = json.load(f)
-
-#     for record in records:   
-
-#         fac = RegSummary( 
-#            matric_number = record['matric_number'] if 'matric_number' in record.keys() else None,
-#            semester = record['semester'] if 'semester' in record.keys() else None,
-#            session_id = record['session_id'] if 'session_id' in record.keys() else None,
-#            courses_taken = record['courses_taken'] if 'courses_taken' in record.keys() else None,
-#            courses_passed = record['courses_passed'] if 'courses_passed' in record.keys() else None,
-#            courses_failed = record['courses_failed'] if 'courses_failed' in record.keys() else None,
-#            tnur = record['tnur'] if 'tnur' in record.keys() else None,
-#            tnup = record['tnup'] if 'tnup' in record.keys() else None,
-#            tnuf = record['tnuf'] if 'tnuf' in record.keys() else None,
-#            ctnur = record['ctnur'] if 'ctnur' in record.keys() else None,
-#            ctnup = record['ctnup'] if 'ctnup' in record.keys() else None,
-#            ctcp = record['ctcp'] if 'ctcp' in record.keys() else None,
-#            ctcup = record['ctcup'] if 'ctcup' in record.keys() else None,
-#            cteup = record['cteup'] if 'cteup' in record.keys() else None,
-#            wcrp = record['wcrp'] if 'wcrp' in record.keys() else None,
-#            gpa = record['gpa'] if 'gpa' in record.keys() else None,
-#            cgpa = record['cgpa'] if 'cgpa' in record.keys() else None,
-#            acad_status = record['acad_status'] if 'acad_status' in record.keys() else None,
-#            last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
-#            last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
-#            deleted = record['deleted'] if 'deleted' in record.keys() else None,
-      
-
-#             last_updated_by_new=request.user,
-         
-#             )
-#         fac.save()
-#         # return Response({'data':record})
-    
-#     return Response({'data':records[0:4]})
-
-
-
-
 @login_required(login_url='index')
 @api_view(['GET', 'POST'])
-def loadJson(request):   
-    # return Response({'data':''}) 
-    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_REGISTRATION.json") as f:
+def loadJson(request):
+    return    
+    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_REG_SUMMARY.json") as f:
         records = json.load(f)
 
     for record in records:   
 
-        fac = Registration( 
-           matric_number_fk = Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
+        fac = RegSummary( 
+           matric_number_fk =  Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
            semester = record['semester'] if 'semester' in record.keys() else None,
            session_id = record['session_id'] if 'session_id' in record.keys() else None,
-           course_code = record['course_code'] if 'course_code' in record.keys() else None,
-           status = record['status'] if 'status' in record.keys() else None,
-           unit = Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit if Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit else 0,
-           score = record['score'] if 'score' in record.keys() else None,
-           grade = record['grade'] if 'grade' in record.keys() else None,
-           last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
+           courses_taken = record['courses_taken'] if 'courses_taken' in record.keys() else None,
+           courses_passed = record['courses_passed'] if 'courses_passed' in record.keys() else None,
+           courses_failed = record['courses_failed'] if 'courses_failed' in record.keys() else None,
+           tnur = record['tnur'] if 'tnur' in record.keys() else None,
+           tnup = record['tnup'] if 'tnup' in record.keys() else None,
+           tnuf = record['tnuf'] if 'tnuf' in record.keys() else None,
+           ctnur = record['ctnur'] if 'ctnur' in record.keys() else None,
+           ctnup = record['ctnup'] if 'ctnup' in record.keys() else None,
+           ctcp = record['ctcp'] if 'ctcp' in record.keys() else None,
+           ctcup = record['ctcup'] if 'ctcup' in record.keys() else None,
+           cteup = record['cteup'] if 'cteup' in record.keys() else None,
+           wcrp = record['wcrp'] if 'wcrp' in record.keys() else None,
+           gpa = record['gpa'] if 'gpa' in record.keys() else None,
+           cgpa = record['cgpa'] if 'cgpa' in record.keys() else None,
+           acad_status = record['acad_status'] if 'acad_status' in record.keys() else None,
            last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
+           last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
            deleted = record['deleted'] if 'deleted' in record.keys() else None,
-           unit_id = record['unit_id'] if 'unit_id' in record.keys() else None,
-           app_user_id = record['app_user_id'] if 'app_user_id' in record.keys() else None, 
+      
 
             last_updated_by_new=request.user,
          
             )
         fac.save()
-        
-        # return Response({'data':'testing'})
+        # return Response({'data':record})
     
     return Response({'data':records[0:4]})
+
+
+
+
+# @login_required(login_url='index')
+# @api_view(['GET', 'POST'])
+# def loadJson(request):   
+#     # return Response({'data':''}) 
+#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_REGISTRATION.json") as f:
+#         records = json.load(f)
+
+#     for record in records:   
+
+#         fac = Registration( 
+#            matric_number_fk = Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
+#            semester = record['semester'] if 'semester' in record.keys() else None,
+#            session_id = record['session_id'] if 'session_id' in record.keys() else None,
+#            course_code = record['course_code'] if 'course_code' in record.keys() else None,
+#            status = record['status'] if 'status' in record.keys() else None,
+#            unit = Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit if Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit else 0,
+#            score = record['score'] if 'score' in record.keys() else None,
+#            grade = record['grade'] if 'grade' in record.keys() else None,
+#            last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
+#            last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
+#            deleted = record['deleted'] if 'deleted' in record.keys() else None,
+#            unit_id = record['unit_id'] if 'unit_id' in record.keys() else None,
+#            app_user_id = record['app_user_id'] if 'app_user_id' in record.keys() else None, 
+
+#             last_updated_by_new=request.user,
+         
+#             )
+#         fac.save()
+        
+#         # return Response({'data':'testing'})
+    
+#     return Response({'data':records[0:4]})
 
 
 # @login_required(login_url='index')

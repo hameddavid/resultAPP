@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('login', views.userlogin, name='userlogin'),
     path('master-sheet', views.display_class_master_sheet_exam, name='master_sheet'),
+    path('master-sheet-sum', views.display_class_master_sheet_summary_exam, name='master_sheet_sum'),
     # path('is_staff', views.is_staff, name='is_staff'),
     # path('forgot', views.forgotPasswordPage, name='forgotPage'),
     # path('register', views.registerPage, name='registerPage'),

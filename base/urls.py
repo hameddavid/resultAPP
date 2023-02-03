@@ -16,6 +16,7 @@ urlpatterns = [
 
     path('testuser', views.testUser, name='testuser'),
     path('test_signal', view_aside.testSignalView, name='test-signal'),
+    path('test_score_input/<str:course>', view_aside.test_score_input, name='test-score-input'),
     # path('about/', views.about, name='about'),
     # path('profile/<str:pk>/', views.user_profile, name='userprofile'),
     path('testpage', views.testpage, name='testpage'),

@@ -65,8 +65,9 @@ def userlogin(request):
                             # Lecturer courses for this semester
                             request.session['pendCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=0)).count()
                             request.session['appCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=10)).count()
+                            programmes = Programme.objects.all()
                             # return redirect('dashboard')
-                            return JsonResponse({'data':'','status':'success','message':'Login successful!'}, safe=False)
+                            return JsonResponse({'data':'','status':'success','message':'Login successful!','programmes':programmes}, safe=False)
                         else:
                             return JsonResponse({'data':'','status':'Failed','message':'Invalid username/password (or inactive account)'}, safe=False)
 
@@ -154,6 +155,45 @@ def display_class_master_sheet_exam(request):
     
    
     return render(request, 'user/master_sheet.html', context={'data':get_broadsheet_table(stud_reg, unique_courses, course_desc, request)})
+
+
+def display_class_master_sheet_summary_exam(request):
+    stud_reg_sum = [{'matric_number':row.matric_number,
+    'surname':row.surname, 'firstname':row.firstname,'summary':row.ug_reg_sum_related.all()} 
+    for row in Student.objects.prefetch_related(Prefetch('ug_reg_sum_related'
+    ,queryset=RegSummary.objects.filter(session_id='2021/2022'))).filter(prog_code='ACC',
+    current_level='200',status='CURRENT').order_by('matric_number') if row.ug_reg_sum_related.all().count()>0]
+    
+    return render(request, 'user/master_sheet_summary.html', context={'data':get_summary_table(stud_reg_sum,request)})
+
+
+
+def prepare_get_values_for_summary_sheet(summary_instance,request):
+    session_id = '2021/2022'
+    semester = '2'
+    t_str = ''
+    prev = {}
+    curr = list(filter(lambda row:row.session_id == session_id and row.semester == semester, summary_instance))
+    if semester == '2':
+        prev = list(filter(lambda row:row.session_id == session_id and row.semester == '1', summary_instance))
+    elif semester == '1':
+        prev_session_list = session_id.split('/')
+        prev_session = str(int(prev_session_list[0])-1)+'/'+str(int(prev_session_list[1])-1)
+        prev = list(filter(lambda row:row.session_id == prev_session and row.semester == '1', summary_instance))
+
+    if len(prev)>0 and len(curr)>0:
+        # There is previous summary
+        t_str +="""
+        <td>"""+ str(round(prev[0].ctnur)) +"""</td>
+        <td>"""+str(round(prev[0].ctnup)) +"""</td>
+        <td>"""+str(round(prev[0].ctcp)) +"""</td>
+        <td>"""+str(round(prev[0].cgpa)) +"""</td>"""
+    elif len(prev) == 0 and len(curr)>0:          
+        # There is no previous summary
+        t_str +="""<td>-</td><td>-</td><td>-</td><td>-</td>
+            <td>""" + str(round(curr[0].tnur)) + """</td>"""
+
+    return t_str
 
 
 def get_total_unit_reg_in_semester(query):
@@ -249,6 +289,21 @@ def get_page_header(request):
 
 
 
+def get_summary_table(stud_reg_sum,request):
+    table_data = """<table class="result_table" >"""
+    for main_index, stud in enumerate(stud_reg_sum, start=1):
+        firstName = stud['firstname'].split(' ') 
+        table_data += """<tr><td>"""+ str(main_index) + """</td>
+         <td>"""+ stud['matric_number'] + """</td>
+         <td> """+ stud['surname'] + """   """+firstName[0] +"""</td>
+         """+prepare_get_values_for_summary_sheet(stud['summary'],request)+"""
+         </tr>"""
+        
+    t = Template(table_data)
+    c = Context({'test':stud_reg_sum})
+    return t.render(c)
+
+    
 def get_broadsheet_table(stud_reg, unique_courses, course_desc, request):
     unique_courses_header = get_formatted_header_query(unique_courses)
     str_table = ''

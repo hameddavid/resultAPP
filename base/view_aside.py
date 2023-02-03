@@ -2,6 +2,19 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from .models import Product, Sale
 from django.db import transaction
+from undergraduate.models import Registration
+from base.baseHelper import session_semester_config
+
+
+
+def test_score_input(request):
+    i_course_code = request.POST.get('course','')
+    if i_course_code is not None:
+        reg = Registration.objects.filter(course_code= i_course_code, semester = session_semester_config.semester_code, session_id_fk=session_semester_config.session)
+        return render(request, 'base/test_score_input.html',context={'data':reg})
+    return JsonResponse({'Error':"Course Code is required"})
+
+
 
 
 def testSignalView(request):
@@ -30,6 +43,8 @@ def testSignalView(request):
         print(stud.name)
     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
     return render(request, 'base/test_signal.html',context={'data':in_data})
+
+
 
 
 

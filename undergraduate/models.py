@@ -66,6 +66,7 @@ class Programme(models.Model):
         self.programme_id.upper()
         super(Programme, self).save(*args, *kwargs)
 
+
 class CourseManager(models.Manager):
     def get_current_courses_instance(self):
         all_courses = Course.objects.all().order_by("-unit_id")
@@ -299,7 +300,7 @@ class OutstandException(models.Model):
 
     
 class RegSummary(models.Model):
-    matric_number = models.CharField(max_length=30, null=True, blank=True)
+    matric_number_fk = models.ForeignKey(Student,to_field='matric_number', related_name='ug_reg_sum_related', on_delete=models.RESTRICT,blank=True, null=True)
     semester = models.CharField(max_length=30, null=True, blank=True)
     session_id = models.CharField(max_length=30, null=True, blank=True)
     courses_taken = models.IntegerField( null=True, blank=True)
@@ -329,7 +330,7 @@ class RegSummary(models.Model):
         db_table = "ug_reg_summary"
 
     def __str__(self) -> str:
-        return f"{self.matric_number}  {self.session_id} {self.semester}"
+        return f"{self.matric_number_fk}  {self.session_id} {self.semester}"
 
 
 

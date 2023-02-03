@@ -69,3 +69,11 @@ class ClassBroadsheetSemesterSessionSerializer(serializers.ModelSerializer):
         model = Student
         fields = ['matric_number','surname','firstname','ug_reg_stud_related']
 
+
+class UndergraduateProgrammeSerializer(serializers.ModelSerializer):
+    # ug_reg_stud_related = RegistrationStudSerializer(many = True, read_only=True)
+
+    class Meta:
+        model = Programme
+        fields = "__all__"
+

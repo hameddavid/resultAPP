@@ -11,7 +11,7 @@ from django.db.models import Prefetch
 from users.models import User,LogUserRoleForSemester
 from undergraduate.models import Programme, Department,Student,Registration
 from .serializers import (UserSerializer,UserRolesLoggerSerializer,
-UserRolesLoggerSerializerHOD,ClassBroadsheetSemesterSessionSerializer)
+UserRolesLoggerSerializerHOD,ClassBroadsheetSemesterSessionSerializer,UndergraduateProgrammeSerializer)
 from base.baseHelper import session_semester_config, session_semester_config_always
 
 
@@ -252,6 +252,21 @@ class ClassBroadsheetSemesterSessionList(generics.ListAPIView):
         return Response(serializer.data)
 
 class_broadsheet_semester_session_list = ClassBroadsheetSemesterSessionList.as_view()
+
+
+class UndergraduateProgrammeList(generics.ListAPIView):
+    queryset = Programme.objects.all()
+    serializer_class = UndergraduateProgrammeSerializer
+
+    def get_queryset(self):
+        return Programme.objects.all().order_by('programme_id')
+   
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = UndergraduateProgrammeSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+undergraduate_programme_list = UndergraduateProgrammeList.as_view()
 
 
 

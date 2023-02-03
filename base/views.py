@@ -10,6 +10,8 @@ from .models import Staff, Setting
 from users.userForm import UserForm
 from users.models import User
 from course.models import LecturerCourse,Course
+from undergraduate.models import Registration
+from base.baseHelper import session_semester_config
 import json, os, re
 
 
@@ -205,3 +207,6 @@ def addRole(request):
 # records = User.objects.filter(first_name__in=[item['first_name'] for item in distinct])
 
 # User.objects.distinct("first_name").all()
+
+
+
