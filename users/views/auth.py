@@ -16,7 +16,7 @@ from course.models import LecturerCourse,Course
 import json, os, re,random,string
 from django.forms.models import model_to_dict
 from undergraduate.models import Course, Curriculum,Student,Department,Programme,RegSummary,Student,Registration
-
+from collections import Counter
 
 
 # Create your views here.
@@ -144,56 +144,135 @@ def validateOtp(request):
 def display_class_master_sheet_exam(request):
     # prog_code , level, session_id, semester
     #  CMP 400 , HIS 300, 400, ACC 300
-    stud_reg = Student.objects.prefetch_related(Prefetch('ug_reg_stud_related'
+    current_session = session_semester_config().session.split('/')
+    stud_reg = [{'matric_number':row.matric_number,
+    'surname':row.surname, 'firstname':row.firstname,'sub':row.ug_reg_stud_related.all()} 
+        for row in Student.objects.prefetch_related(Prefetch('ug_reg_stud_related'
     ,queryset=Registration.objects.filter(session_id='2021/2022', semester='2'))).filter(prog_code='ACC',
     current_level='300',status='CURRENT').order_by('matric_number')
+    if row.ug_reg_stud_related.all().count()>0]
     
     unique_courses = Registration.objects.filter(session_id='2021/2022', semester='2',
-    matric_number_fk__in=[mats['matric_number'] for mats in stud_reg.values('matric_number')]).values('course_code',
+    matric_number_fk__in=[mats['matric_number'] for mats in stud_reg]).values('course_code',
     'unit','status','unit_id').distinct('course_code')
     course_desc = Course.objects.filter(course_code__in=[el['course_code'] for el in unique_courses]).order_by('course_code').distinct('course_code')
     
    
-    return render(request, 'user/master_sheet.html', context={'data':get_broadsheet_table(stud_reg, unique_courses, course_desc, request)})
+    return render(request, 'user/master_sheet.html', context={'data':get_broadsheet_table(stud_reg, unique_courses, course_desc,current_session, request)})
+
 
 
 def display_class_master_sheet_summary_exam(request):
+    params = {'session_id':'2022/2023','semester':'2', 'prog':'CMP', 'level':'400'}
+    
+    session_list = [params['session_id']]
+    val1 = params['session_id'].split('/')
+    current_session = session_semester_config().session.split('/')
+    prev_level = int(current_session[1]) - int(val1[1])
+    prev_session = f'{str(int(val1[0])-1)}/{str(int(val1[1])-1)}'
+    if params['semester'] == '1':
+        session_list.append(prev_session)
     stud_reg_sum = [{'matric_number':row.matric_number,
     'surname':row.surname, 'firstname':row.firstname,'summary':row.ug_reg_sum_related.all()} 
     for row in Student.objects.prefetch_related(Prefetch('ug_reg_sum_related'
-    ,queryset=RegSummary.objects.filter(session_id='2021/2022'))).filter(prog_code='ACC',
-    current_level='200',status='CURRENT').order_by('matric_number') if row.ug_reg_sum_related.all().count()>0]
+    ,queryset=RegSummary.objects.filter(session_id__in=session_list))).filter(prog_code= params['prog'],
+    current_level=params['level'],status='CURRENT').order_by('matric_number') if [True for val in row.ug_reg_sum_related.all() if val.session_id in session_list ]]
+
+    courses_from_reg = Registration.objects.filter(session_id__lte='2021/2022', status = 'C',
+    matric_number_fk__in=[mats['matric_number'] for mats in stud_reg_sum]).values('matric_number_fk',
+    'course_code','score','status','grade')
+  
+    courses_from_curr = Curriculum.objects.filter(programme=params['prog'],status ='C', course_reg_level__lte= str(prev_level)+'00').values('course_code')
     
-    return render(request, 'user/master_sheet_summary.html', context={'data':get_summary_table(stud_reg_sum,request)})
+    return render(request, 'user/master_sheet_summary.html', context={'data':get_summary_table(stud_reg_sum,courses_from_reg,courses_from_curr,current_session,request)})
 
 
 
-def prepare_get_values_for_summary_sheet(summary_instance,request):
-    session_id = '2021/2022'
-    semester = '2'
+
+def prepare_get_values_for_summary_sheet(summary_instance,courses_from_reg, courses_from_curr,request):
+    # params = {'session_id':'2021/2022','semester':'1', 'prog':'ECO', 'level':'300'}
+    # params = {'session_id':'2022/2023','semester':'1', 'prog':'CMP', 'level':'400'}
+    params = {'session_id':'2022/2023','semester':'2', 'prog':'CMP', 'level':'400'}
     t_str = ''
     prev = {}
-    curr = list(filter(lambda row:row.session_id == session_id and row.semester == semester, summary_instance))
-    if semester == '2':
-        prev = list(filter(lambda row:row.session_id == session_id and row.semester == '1', summary_instance))
-    elif semester == '1':
-        prev_session_list = session_id.split('/')
+    curr = list(filter(lambda row:row.session_id == params['session_id'] and row.semester == params['semester'], summary_instance))
+    if params['semester'] == '2':
+        prev = list(filter(lambda row:row.session_id == params['session_id'] and row.semester == '1', summary_instance))
+    elif params['semester'] == '1':
+        prev_session_list = params['session_id'].split('/')
         prev_session = str(int(prev_session_list[0])-1)+'/'+str(int(prev_session_list[1])-1)
-        prev = list(filter(lambda row:row.session_id == prev_session and row.semester == '1', summary_instance))
-
+        prev = list(filter(lambda row:row.session_id == prev_session and row.semester == '2', summary_instance))
+  
     if len(prev)>0 and len(curr)>0:
-        # There is previous summary
+        # There is previous and current summary
         t_str +="""
-        <td>"""+ str(round(prev[0].ctnur)) +"""</td>
-        <td>"""+str(round(prev[0].ctnup)) +"""</td>
-        <td>"""+str(round(prev[0].ctcp)) +"""</td>
-        <td>"""+str(round(prev[0].cgpa)) +"""</td>"""
+        <td>"""+control_null_value_2(prev[0].ctnur) +"""</td>
+        <td>"""+control_null_value_2(prev[0].ctnup) +"""</td>
+        <td>"""+control_null_value_2(prev[0].ctcp) +"""</td>
+        <td>"""+control_null_value_1(prev[0].cgpa) +"""</td>
+        <td>"""+control_null_value_2(curr[0].tnur) +"""</td>
+        <td>"""+control_null_value_2(curr[0].tnup) +"""</td>
+        <td>"""+control_null_value_2(curr[0].wcrp) +"""</td>
+        <td>"""+control_null_value_1(curr[0].gpa)+"""</td>
+        <td>"""+str(get_stud_oustanding(curr[0], courses_from_reg, courses_from_curr, request)[0]) +"""</td>
+        <td>"""+control_null_value_2(curr[0].ctnur) +"""</td>
+        <td>"""+control_null_value_2(curr[0].ctnup) +"""</td>
+        <td>"""+control_null_value_2(curr[0].ctcp) +"""</td>
+        <td>"""+control_null_value_1(curr[0].cgpa) +"""</td>
+        <td>"""+str(get_stud_oustanding(curr[0], courses_from_reg, courses_from_curr, request)[1]) +"""</td>
+        <td>"""+str(curr[0].acad_status) +"""</td>"""
     elif len(prev) == 0 and len(curr)>0:          
         # There is no previous summary
         t_str +="""<td>-</td><td>-</td><td>-</td><td>-</td>
-            <td>""" + str(round(curr[0].tnur)) + """</td>"""
+            <td>""" + control_null_value_2(curr[0].tnur) + """</td>
+        <td>"""+control_null_value_2(curr[0].tnup) +"""</td>
+        <td>"""+control_null_value_2(curr[0].wcrp) +"""</td>
+        <td>"""+control_null_value_1(curr[0].gpa) +"""</td>
+        <td>"""+str(get_stud_oustanding(curr[0], courses_from_reg, courses_from_curr, request)[0]) +"""</td>
+        <td>"""+control_null_value_2(curr[0].ctnur) +"""</td>
+        <td>"""+control_null_value_2(curr[0].ctnup) +"""</td>
+        <td>"""+control_null_value_2(curr[0].ctcp) +"""</td>
+        <td>"""+control_null_value_1(curr[0].cgpa) +"""</td>
+        <td>"""+str(get_stud_oustanding(curr[0], courses_from_reg, courses_from_curr, request)[1]) +"""</td>
+        <td>"""+str(curr[0].acad_status) +"""</td>"""
+    elif len(prev) > 0 and len(curr)==0:  
+        # There is previous summary only
+        t_str +="""
+        <td>"""+control_null_value_2(prev[0].ctnur) +"""</td>
+        <td>"""+control_null_value_2(prev[0].ctnup) +"""</td>
+        <td>"""+control_null_value_2(prev[0].ctcp) +"""</td>
+        <td>"""+control_null_value_1(prev[0].cgpa) +"""</td>"""
 
     return t_str
+
+
+def control_null_value_1(val):
+    if val is None:
+        return ' '
+    else:
+        return str(round(val,2))
+
+def control_null_value_2(val):
+    if val is None:
+        return ' '
+    else:
+        return str(round(val))
+
+
+def get_stud_oustanding(curr,courses_from_reg,courses_from_curr, request):
+    list_reg_courses = [row['course_code'] for row in courses_from_reg if row['matric_number_fk'] == f'{curr.matric_number_fk}']
+    list_reg_failed_courses = [row['course_code'] for row in courses_from_reg if row['matric_number_fk'] == f'{curr.matric_number_fk}' and row['grade']=='F']
+    list_curr_courses = [row['course_code'] for row in courses_from_curr]
+    courses_in_curr_not_reg = list((Counter(list_curr_courses) - Counter(list_reg_courses)).elements())
+    if len(list_reg_courses) > 0:
+          courses_in_curr_not_reg = [f'*{course}' for course in courses_in_curr_not_reg]
+    courses = ''
+    combined = list_reg_failed_courses + courses_in_curr_not_reg
+    for index, course in enumerate(combined, start=1):
+        courses += course
+        if index != len(combined):
+            courses += ' , '
+    return [len(list_reg_failed_courses + courses_in_curr_not_reg),courses]
 
 
 def get_total_unit_reg_in_semester(query):
@@ -254,12 +333,10 @@ def get_table_header_row(unique_courses_header):
        return table_header
 
 
-def get_page_header(request):
+def get_page_header(request, current_session):
     val1 = '2019/2020'.split('/')
-    val2 = session_semester_config().session.split('/')
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-    print(int(val2[1]) - int(val1[1]))
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    val2 = current_session
+
     details = {'faculty':'SMS', 'department':'Economics','program':'Economics','level':'200','semester':'1','session':'2020/2021'}
 
     return  """   <div class="page"> {% load static %}
@@ -287,55 +364,99 @@ def get_page_header(request):
 	    </div>"""
             
 
+def get_static_table_header_for_summary_sheet():
+    return """<table class="result_table" >
+    <tr><th>SN </th> <th> Matric Number</th> <th>Names </th> <th>Prev CTNUR </th>
+    <th>Prev CTNUP </th> <th>Prev CTCP </th> <th>Prev CGPA </th>
+    <th>Curr TNUR </th> <th>Curr TNUP </th> <th> Curr TCP </th> <th>Curr GPA </th>
+    <th>Outstd</th> <th>CTNUR </th> <th> CTNUP </th> <th> CTCP </th> <th> CGPA </th>
+    <th> Outstanding Course </th> <th>Status</th>
+    </tr>
+    """
+
+def get_summary_sheet_abbr_details():
+    return """<table class="result_table" >
+    <tr><th>SN </th> <th> Matric Number</th> <th>Names </th> <th>Prev CTNUR </th>
+    <th>Prev CTNUP </th> <th>Prev CTCP </th> <th>Prev CGPA </th>
+    <th>Curr TNUR </th> <th>Curr TNUP </th> <th> Curr TCP </th> <th>Curr GPA </th>
+    <th>Outstd</th> <th>CTNUR </th> <th> CTNUP </th> <th> CTCP </th> <th> CGPA </th>
+    <th> Outstanding Course </th> <th>Status</th>
+    </tr></table>
+    """
 
 
-def get_summary_table(stud_reg_sum,request):
-    table_data = """<table class="result_table" >"""
+def get_summary_table(stud_reg_sum,courses_from_reg,courses_from_curr,current_session,request):
+    table_data = ''
+    table_data += get_page_header(request,current_session)
+    head_tracker = 0
+    sn = 0
     for main_index, stud in enumerate(stud_reg_sum, start=1):
+        head_tracker +=1
+        if main_index == 1:
+                table_data +=  get_static_table_header_for_summary_sheet()
         firstName = stud['firstname'].split(' ') 
-        table_data += """<tr><td>"""+ str(main_index) + """</td>
+        val_prepare_get_values_for_summary_sheet = prepare_get_values_for_summary_sheet(stud['summary'],courses_from_reg,courses_from_curr,request)
+        if val_prepare_get_values_for_summary_sheet == '':
+            continue
+        sn +=1
+        table_data += """<tr><td>"""+ str(sn) + """</td>
          <td>"""+ stud['matric_number'] + """</td>
          <td> """+ stud['surname'] + """   """+firstName[0] +"""</td>
-         """+prepare_get_values_for_summary_sheet(stud['summary'],request)+"""
+         """+val_prepare_get_values_for_summary_sheet+"""
          </tr>"""
-        
+        if head_tracker == 20:
+                table_data += """</table></div></br></br>""" 
+                table_data +=get_page_header(request,current_session)+get_static_table_header_for_summary_sheet()
+                head_tracker = 0
+        if main_index == len(stud_reg_sum):
+            if head_tracker <= 10:
+                table_data += """</table></br></br>"""+get_summary_sheet_abbr_details()+"""</div>"""
+            elif head_tracker > 10:
+                 table_data += """</table></div></br></br>""" 
+                 table_data +=get_page_header(request,current_session)+get_summary_sheet_abbr_details()+"""</table></div>"""
+        # if main_index == 4:
+        #     break
     t = Template(table_data)
     c = Context({'test':stud_reg_sum})
     return t.render(c)
 
     
-def get_broadsheet_table(stud_reg, unique_courses, course_desc, request):
+def get_broadsheet_table(stud_reg, unique_courses, course_desc,current_session, request):
     unique_courses_header = get_formatted_header_query(unique_courses)
     str_table = ''
-    str_table += get_page_header(request)
+    str_table += get_page_header(request,current_session)
     head_tracker = 0
-    sn = 0
     for main_index, stud in enumerate(stud_reg, start=1): 
-        tur = str(get_total_unit_reg_in_semester(stud.ug_reg_stud_related.all()) )
+        tur = str(get_total_unit_reg_in_semester(stud['sub']) )
         if main_index == 1:
                 str_table += """<table class="result_table" >"""
                 str_table +=get_table_header_row(unique_courses_header)
-        if tur != '0':
-             head_tracker +=1
-             sn +=1
-             firstName = stud.firstname.split(' ')
-             courses_score_dic = get_all_courses_in_dic(stud.ug_reg_stud_related.all())
-             str_table += """ <tr >
-            <td style="text-align: left">"""+ str(sn) +"""</td>
-            <td style="text-align: left">"""+ stud.matric_number +"""</td>
-            <td style="text-align: left">"""+ stud.surname+"""  """ +firstName[0]+"""</td>
-            <td style="text-align: center">"""+tur+"""</td>"""
-             for ind,course in enumerate(unique_courses_header):
-                str_table +="""<td style="text-align: center;">"""+ str(get_score_for_current_course_header(courses_score_dic,course))+"""</td>""" 
-             str_table += """</tr> """  
-        # print(f"{main_index} {stud_count}")
-        if main_index != stud_reg.count():
-            print(f"{main_index}")
-            if head_tracker == 20:
-                str_table += """</table></div></br></br>""" 
-                str_table +=get_page_header(request)+"""<table class="result_table">"""+get_table_header_row(unique_courses_header)
+        head_tracker +=1
+        firstName = stud['firstname'].split(' ')
+        courses_score_dic = get_all_courses_in_dic(stud['sub'])
+        str_table += """ <tr >
+    <td style="text-align: left">"""+ str(main_index) +"""</td>
+    <td style="text-align: left">"""+ stud['matric_number'] +"""</td>
+    <td style="text-align: left">"""+ stud['surname']+"""  """ +firstName[0]+"""</td>
+    <td style="text-align: center">"""+tur+"""</td>"""
+        for ind,course in enumerate(unique_courses_header):
+            str_table +="""<td style="text-align: center;">"""+ str(get_score_for_current_course_header(courses_score_dic,course))+"""</td>""" 
+        str_table += """</tr> """  
+        
+        if head_tracker == 20:
+                str_table += """</table></div></br></br>"""
+                if  len(stud_reg) != main_index :
+                    str_table +=get_page_header(request,current_session)+"""<table class="result_table">"""+get_table_header_row(unique_courses_header)
                 head_tracker = 0
-        else: str_table += """</table></div></br>"""+get_unique_courses_desc(course_desc)
+        # if (len(stud_reg)-main_index) < 20 :
+        #     if head_tracker <= 10:
+        #         str_table += """</table></br></br>"""+get_unique_courses_desc(course_desc)+"""</div>"""
+        #     elif head_tracker > 10:
+        #          str_table += """</table></div></br></br>""" 
+        #          str_table +=get_page_header(request)+get_unique_courses_desc(course_desc)+"""</table></div>"""
+        if len(stud_reg)  == main_index :
+                str_table += """</table></div></br></br>""" 
+                str_table +=get_page_header(request,current_session)+get_unique_courses_desc(course_desc)+"""</table></div>"""
     str_table += "</table>" 
     t = Template(str_table)
     c = Context({'test':stud_reg})
@@ -433,3 +554,17 @@ def get_broadsheet_table(stud_reg, unique_courses, course_desc, request):
     # return "Password has been changed successfully"
 
     
+    
+#  SELECT DISTINCT `matric_number` AS s_matric_number , `programme` AS s_program  ,
+#          `course_status` AS s_course_status , `course_code` AS s_course_code ,
+#          `course_id` AS s_course_id ,`t_courses`.`_unit` AS s_course_unit ,
+#          t_registrations.registration_level, t_registrations.last_update_date as dt_date
+#          FROM t_registrations INNER JOIN t_course_registered ON 
+#           `registration_id` =`registration_id_FK` 
+#            INNER JOIN `t_students`  ON `t_registrations`.`matric_number_FK` =
+#             `matric_number` INNER JOIN `t_programmes` ON`programme_id` =`programme_id_FK` 
+#              INNER JOIN `t_courses` ON`course_id` =`course_id_FK` 
+#               WHERE `semester_id_FK` = 22  
+#                 AND `t_registrations`.`registration_level` =`t_students`.`current_level` 
+#                  and length(trim(matric_number)) > 5
+#               ORDER BY  t_registrations.last_update_date,matric_number ASC; 
