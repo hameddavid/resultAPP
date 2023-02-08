@@ -65,9 +65,9 @@ def userlogin(request):
                             # Lecturer courses for this semester
                             request.session['pendCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=0)).count()
                             request.session['appCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=10)).count()
-                            programmes = Programme.objects.all()
+                            
                             # return redirect('dashboard')
-                            return JsonResponse({'data':'','status':'success','message':'Login successful!','programmes':programmes}, safe=False)
+                            return JsonResponse({'data':'','status':'success','message':'Login successful!'}, safe=False)
                         else:
                             return JsonResponse({'data':'','status':'Failed','message':'Invalid username/password (or inactive account)'}, safe=False)
 
@@ -100,7 +100,8 @@ def userlogin(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='index')
 def dashboard(request):
-    context = {}
+    programmes = Programme.objects.all()
+    context = {'prog':programmes}
     return render(request, 'user/dashboard.html', context)
 
 

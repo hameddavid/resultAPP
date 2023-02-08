@@ -15,7 +15,7 @@ $(document).ready(function ($) {
         data: formData,
         dataType: "json",
         beforeSend: function () {
-          $("#login_button").html('<i class="mdi mdi-loading mdi-spin"></i>');
+          $("#login_button").html('<i class="fa fa-spinner fa-spin"></i>');
         },
         success: function (response) {
           console.log(response);
@@ -28,6 +28,7 @@ $(document).ready(function ($) {
         error: function (response) {
           console.log(response);
           $("#login_button").html("Login");
+          alert("hey");
           alert(response.responseJSON.message);
         },
       });
