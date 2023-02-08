@@ -11,7 +11,7 @@ $(document).ready(function ($) {
       data: formData,
       dataType: "json",
       beforeSend: function () {
-        $("#btnSubmitRole").html('<i class="mdi mdi-loading mdi-spin"></i>');
+        $("#btnSubmitRole").html('<i class="fa fa-spinner fa-spin"></i>');
       },
       success: function (response) {
         console.log(response);
