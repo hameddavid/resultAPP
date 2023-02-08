@@ -91,6 +91,7 @@
                                             <h3 class="fw-bold ">{{request.user.firstname}}</h3>
                                             <p class="line-height-custom">...</p>
                                             <a class="btn bg-secondary text-light btn-lg lift" href="#">My Profile</a>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -129,11 +130,9 @@
                                     <div class="mb-2">
                                         <select class="form-control form-control-md" name="programme" id="programme">
                                             <option value="">Select Programme</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-2">
-                                        <select class="form-control form-control-md" name="department" id="department">
-                                            <option value="">Select Department</option>
+                                            {% for row in prog %}
+                                            <option value="{{row.programme_id}}">{{row.programme}}</option>
+                                            {% endfor%}
                                         </select>
                                     </div>
                                     <button type="submit" id="btnSubmitRole" class="btn btn-primary mt-2">Update Role</button>
