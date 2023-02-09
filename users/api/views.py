@@ -42,10 +42,12 @@ def check_user_role_for_semester(request):
         else:
             return Response( {'status':'failed','message':'Unkown status','data':''}, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'POST':
+        print(request.data.getlist('roles[]'))
+        print(request.data.get('programme').split('*'))
         serializer = UserRolesLoggerSerializer(data = {  
-        "roles" : {session_semester_config().id: request.data.get('roles') or None},
-        "programme": request.data.get('programme') or None,
-        "department":  request.data.get('department') or None,
+        "roles" : {session_semester_config().id: request.data.getlist('roles[]') or None},
+        "programme": request.data.get('programme').split('*')[0]  or None,
+        "department": Department.objects.filter(department=request.data.get('programme').split('*')[1]).first().id  or None,
         "semester_session": session_semester_config().id or None,
         "owner": request.user.id or None
          })

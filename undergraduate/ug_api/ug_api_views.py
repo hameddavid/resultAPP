@@ -13,36 +13,41 @@ import json
 from datetime import datetime
 
 
-@login_required(login_url='index')
+# @login_required(login_url='index')
 @api_view(['GET', 'POST'])
 def loadRegistrationsJson(request):   
     # return Response({'data':''}) 
-    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/t_registrations.json") as f:
+    # with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/t_registrations.json") as f:
+    jamb_no_list = []
+    with open("C:/Users/PC/Downloads/t_registrations.json") as f:
         records = json.load(f)
 
     for record in records:   
+        if  record['s_matric_number'].upper().startswith('RUN'):
+            continue
+        if record['s_matric_number'] not in jamb_no_list:
+            jamb_no_list.append(record['s_matric_number'])
+        # fac = Registration( 
+        #    matric_number_fk = Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
+        #    semester = record['semester'] if 'semester' in record.keys() else None,
+        #    session_id = record['session_id'] if 'session_id' in record.keys() else None,
+        #    course_code = record['course_code'] if 'course_code' in record.keys() else None,
+        #    status = record['status'] if 'status' in record.keys() else None,
+        #    unit = Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit if Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit else 0,
+        #    score = record['score'] if 'score' in record.keys() else None,
+        #    grade = record['grade'] if 'grade' in record.keys() else None,
+        #    last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
+        #    last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
+        #    deleted = record['deleted'] if 'deleted' in record.keys() else None,
+        #    unit_id = record['unit_id'] if 'unit_id' in record.keys() else None,
+        #    app_user_id = record['app_user_id'] if 'app_user_id' in record.keys() else None, 
 
-        fac = Registration( 
-           matric_number_fk = Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
-           semester = record['semester'] if 'semester' in record.keys() else None,
-           session_id = record['session_id'] if 'session_id' in record.keys() else None,
-           course_code = record['course_code'] if 'course_code' in record.keys() else None,
-           status = record['status'] if 'status' in record.keys() else None,
-           unit = Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit if Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit else 0,
-           score = record['score'] if 'score' in record.keys() else None,
-           grade = record['grade'] if 'grade' in record.keys() else None,
-           last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
-           last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
-           deleted = record['deleted'] if 'deleted' in record.keys() else None,
-           unit_id = record['unit_id'] if 'unit_id' in record.keys() else None,
-           app_user_id = record['app_user_id'] if 'app_user_id' in record.keys() else None, 
-
-            last_updated_by_new=request.user,
+        #      last_updated_by_new=request.user,
          
-            )
+        #     )
         # fac.save()
         
-        return Response({'data':record})
+    return Response({'data':jamb_no_list})
     
     return Response({'data':records[0:4]})
 

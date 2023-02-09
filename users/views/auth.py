@@ -100,8 +100,8 @@ def userlogin(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='index')
 def dashboard(request):
-    programmes = Programme.objects.all()
-    context = {'prog':programmes}
+    
+    context = {'prog':Programme.objects.all(),'dpt':Department.objects.all()}
     return render(request, 'user/dashboard.html', context)
 
 
