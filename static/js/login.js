@@ -20,12 +20,12 @@ $(document).ready(function ($) {
         success: function (response) {
           console.log(response);
           alert(response.message);
-          $("#login_button").html("Login");
           if (response.message === "Login successful!") {
             setTimeout(function () {
               window.location.href = "user/dashboard";
             }, 1500);
           }
+          $("#login_button").html("Login");
         },
         error: function (response) {
           console.log(response);
