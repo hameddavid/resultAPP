@@ -18,6 +18,10 @@ from base.baseHelper import session_semester_config, session_semester_config_alw
 @login_required(login_url='index')
 @api_view(['POST'])
 def approve_disapprove_user_roles_in_semester(request):
+    if request.POST['id']:
+         return Response({'status':'failed','message':'yes','data':''}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'status':'failed','message':'No','data':''}, status=status.HTTP_400_BAD_REQUEST)
     print(request.data.get('id'))
     if request.data.get('id') is None:
         return Response({'status':'failed','message':'id and request type are required','data':''}, status=status.HTTP_400_BAD_REQUEST)
@@ -28,7 +32,8 @@ def approve_disapprove_user_roles_in_semester(request):
         else:
             return Response({'status':'failed','message':'Error fetching user/roles','data':''}, status=status.HTTP_400_BAD_REQUEST)
     except LogUserRoleForSemester.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response({'status':'failed','message':'Error fetching user/roles','data':''}, status=status.HTTP_400_BAD_REQUEST)
+
     if request.method == 'POST' and request.data.get('type').upper() == 'APPROVE':
         roles_log.role_status = "APPROVED"
         roles_log.approved_by = request.user
