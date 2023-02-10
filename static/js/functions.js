@@ -1,4 +1,6 @@
 $(document).ready(function ($) {
+  $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+
   $("#btnSubmitRole").click(function (e) {
     e.preventDefault();
     var formData = $("#formSubmitRole").serialize();
@@ -21,6 +23,56 @@ $(document).ready(function ($) {
       error: function (response) {
         console.log(response);
         $("#btnSubmitRole").html("Update Role");
+        alert(response.responseJSON.message);
+      },
+    });
+  });
+
+  $(".approve").click(function (e) {
+    e.preventDefault();
+    var type = "POST";
+    var ajaxurl = "/hod-role-action";
+    $.ajax({
+      type: type,
+      url: ajaxurl,
+      data: { id: $(this).data("id"), type: $(this).data("type") },
+      dataType: "json",
+      beforeSend: function () {
+        $(this).html('<i class="fa fa-spinner fa-spin"></i>');
+      },
+      success: function (response) {
+        console.log(response);
+        alert(response.message);
+        location.reload();
+      },
+      error: function (response) {
+        console.log(response);
+        $(this).html("Approve");
+        alert(response.responseJSON.message);
+      },
+    });
+  });
+
+  $(".disapprove").click(function (e) {
+    e.preventDefault();
+    var type = "POST";
+    var ajaxurl = "/hod-role-action";
+    $.ajax({
+      type: type,
+      url: ajaxurl,
+      data: { id: $(this).data("id"), type: $(this).data("type") },
+      dataType: "json",
+      beforeSend: function () {
+        $(this).html('<i class="fa fa-spinner fa-spin"></i>');
+      },
+      success: function (response) {
+        console.log(response);
+        alert(response.message);
+        location.reload();
+      },
+      error: function (response) {
+        console.log(response);
+        $(this).html("Disapprove");
         alert(response.responseJSON.message);
       },
     });
