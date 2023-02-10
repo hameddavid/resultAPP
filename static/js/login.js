@@ -20,15 +20,16 @@ $(document).ready(function ($) {
         success: function (response) {
           console.log(response);
           alert(response.message);
-
-          setTimeout(function () {
-            window.location.href = "user/dashboard";
-          }, 1800);
+          $("#login_button").html("Login");
+          if (response.message === "Login successful") {
+            setTimeout(function () {
+              window.location.href = "user/dashboard";
+            }, 1500);
+          }
         },
         error: function (response) {
           console.log(response);
           $("#login_button").html("Login");
-          alert("hey");
           alert(response.responseJSON.message);
         },
       });
