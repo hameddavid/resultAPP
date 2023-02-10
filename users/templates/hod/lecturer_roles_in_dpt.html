@@ -55,20 +55,13 @@
                                                 {{role.role_status}}
                                                </td>
                                                 <td>
-                                                    <form action="get_student_reg" method="post">
-                                                        {% csrf_token %}
-                                                        <input type="text" value="{{course.course_code}}" name="course_code" id="course_code" hidden>
-                                                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                            
-                                                            {% if role.role_status == 'PENDING' %}
-                                                                <button type="submit" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="">approve <i class="icofont-eye-open text-success"></i></button>
-                                                            {% else  %}
-                                                            <button type="submit" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="">disapprove <i class="icofont-eye-open text-success"></i></button>
-
-                                                            {% endif %}
-                                                            
-                                                        </div>
-                                                    </form>
+                                                    <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                                        {% if role.role_status == 'PENDING' %}
+                                                            <button data-id="{{role.id}}" data-type="approve" class="btn btn-outline-success approve">Approve <i class="icofont-eye-open text-info"></i></button>
+                                                        {% else  %}
+                                                            <button data-id="{{role.id}}" data-type="disapprove" class="btn btn-outline-danger disapprove">Disapprove <i class="icofont-eye-open text-info"></i></button>
+                                                        {% endif %}
+                                                    </div>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -132,6 +125,7 @@
     <!-- Jquery Page Js -->
     <script src="{% static 'js/template.js' %}"></script>
     <script src="{% static 'js/index.js' %}"></script>
+    <script src="{% static 'js/functions.js' %}"></script>
 
 
 
