@@ -17,6 +17,7 @@ import json, os, re,random,string
 from django.forms.models import model_to_dict
 from undergraduate.models import Course, Curriculum,Student,Department,Programme,RegSummary,Student,Registration
 from collections import Counter
+from rest_framework import status, generics
 
 
 # Create your views here.
@@ -67,9 +68,9 @@ def userlogin(request):
                             request.session['appCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=10)).count()
                             
                             # return redirect('dashboard')
-                            return JsonResponse({'data':'','status':'success','message':'Login successful!'}, safe=False)
+                            return JsonResponse({'data':'','status':'success','message':'Login successful!'}, safe=False, status=status.HTTP_200_OK)
                         else:
-                            return JsonResponse({'data':'','status':'Failed','message':'Invalid username/password (or inactive account)'}, safe=False)
+                            return JsonResponse({'data':'','status':'Failed','message':'Invalid username/password (or inactive account)'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
 
                     else:
                         messages.error(request, f"Kindly activate your account for {session_semester_config().semester_name} {session_semester_config()} academic session")
@@ -84,7 +85,7 @@ def userlogin(request):
                     save_user.save()
                     return redirect('otp')
                 else:
-                    return JsonResponse({'data':'','status':'Failed','message':'Wrong staff email supplied'}, safe=False)
+                    return JsonResponse({'data':'','status':'Failed','message':'Wrong staff email supplied'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
 
         else:
             messages.error(request, 'No active session/semester, contact Admin')
