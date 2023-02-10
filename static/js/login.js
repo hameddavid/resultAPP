@@ -16,20 +16,21 @@ $(document).ready(function ($) {
         dataType: "json",
         beforeSend: function () {
           $("#login_button").html('<i class="fa fa-spinner fa-spin"></i>');
+          $("#login_button").prop("disabled", true);
         },
         success: function (response) {
           console.log(response);
           alert(response.message);
-          if (response.message === "Login successful!") {
+          if (response.status === "success") {
             setTimeout(function () {
               window.location.href = "user/dashboard";
             }, 1500);
           }
-          $("#login_button").html("Login");
         },
         error: function (response) {
           console.log(response);
           $("#login_button").html("Login");
+          $("#login_button").prop("disabled", false);
           alert(response.responseJSON.message);
         },
       });
