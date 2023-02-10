@@ -145,7 +145,7 @@ class LogUserRoleForSemester(models.Model):
     class Status(models.TextChoices):
         PENDING = "PENDING", 'PENDING' 
         APPROVED = "APPROVED", 'APPROVED'   
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner_semester_role_related')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner_semester_role_related',to_field='email')
     roles = models.JSONField()
     semester_session = models.ForeignKey('base.Setting', on_delete=models.RESTRICT)
     programme = models.ForeignKey('undergraduate.Programme', related_name='programme_semester_role_related', on_delete=models.RESTRICT)
