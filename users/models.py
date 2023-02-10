@@ -150,7 +150,7 @@ class LogUserRoleForSemester(models.Model):
     semester_session = models.ForeignKey('base.Setting', on_delete=models.RESTRICT)
     programme = models.ForeignKey('undergraduate.Programme', related_name='programme_semester_role_related', on_delete=models.RESTRICT)
     department = models.ForeignKey('undergraduate.Department', related_name='department_semester_role_related', on_delete=models.RESTRICT)
-    approved_by = models.ForeignKey('users.User', related_name='approved_by_semester_role_related',on_delete=models.RESTRICT,null=True, blank=True)
+    approved_by = models.ForeignKey('users.User',to_field='email', related_name='approved_by_semester_role_related',on_delete=models.RESTRICT,null=True, blank=True)
     approved_at = models.DateTimeField(auto_now_add=True)
     role_status = models.CharField( max_length=15,choices=Status.choices, default= Status.PENDING)
     deleted = models.CharField(max_length=1, default='N',null=True, blank=True)
