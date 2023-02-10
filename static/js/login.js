@@ -21,7 +21,7 @@ $(document).ready(function ($) {
           console.log(response);
           alert(response.message);
           $("#login_button").html("Login");
-          if (response.message === "Login successful") {
+          if (response.message === "Login successful!") {
             setTimeout(function () {
               window.location.href = "user/dashboard";
             }, 1500);
