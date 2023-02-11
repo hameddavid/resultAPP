@@ -1,6 +1,13 @@
 $(document).ready(function ($) {
+  $.ajaxSetup({
+    headers: {
+      "X-CSRFToken": $('meta[name="csrf-token"]').attr("content"),
+    },
+  });
   $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+
   $(".dept").hide();
+
   $("#hod").change(function () {
     if (this.checked) {
       $(".dept").show();
@@ -45,7 +52,7 @@ $(document).ready(function ($) {
   $(".approve").click(function (e) {
     e.preventDefault();
     var type = "POST";
-    var ajaxurl = "/hod-role-action";
+    var ajaxurl = "/user-api/hod-role-action";
     $.ajax({
       type: type,
       url: ajaxurl,
@@ -70,7 +77,7 @@ $(document).ready(function ($) {
   $(".disapprove").click(function (e) {
     e.preventDefault();
     var type = "POST";
-    var ajaxurl = "/hod-role-action";
+    var ajaxurl = "/user-api/hod-role-action";
     $.ajax({
       type: type,
       url: ajaxurl,
