@@ -22,9 +22,19 @@ $(document).ready(function ($) {
           console.log(response);
           alert(response.message);
           if (response.status === "success") {
-            setTimeout(function () {
-              window.location.href = "user/dashboard";
-            }, 1500);
+            if (response.url === "semester_activation") {
+              setTimeout(function () {
+                window.location.href = "semester_activation";
+              }, 1500);
+            } else if (response.url === "otp") {
+              setTimeout(function () {
+                window.location.href = "otp";
+              }, 1500);
+            } else {
+              setTimeout(function () {
+                window.location.href = "user/dashboard";
+              }, 1500);
+            }
           }
         },
         error: function (response) {
