@@ -26,6 +26,21 @@
             </li>
         </ul>
 
+          <!-- Menu: manage lecturers in department by HOD -->
+
+          <ul class="menu-list flex-grow-1 mt-3">
+            <li><a class="m-link" href="{% url 'dashboard' %}"><i class="icofont-home"></i> <span>Dashboard</span></a></li>
+            <li class="collapsed">
+                <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" href="#">
+                    <i class="icofont-law-document fs-5"></i> <span>Manage Kecturers</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+                <ul class="sub-menu collapse" id="dashboard-Components">
+                    <li><a class="ms-link" href="{% url 'view_lecturer_roles' %}"> <span>Lecturers</span></a></li>
+                    <li><a class="ms-link" href="{% url 'approved_courses' %}"> <span>Approved Courses</span></a></li>
+                    <li><a class="ms-link" href="{% url 'pending_courses' %}"> <span>Pending Courses</span></a></li>
+                </ul>
+            </li>
+        </ul>
+
         <!-- Theme: Switch Theme -->
         <ul class="list-unstyled mb-0">
             <li class="d-flex align-items-center justify-content-center">

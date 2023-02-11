@@ -29,11 +29,11 @@ def approve_disapprove_user_roles_in_semester(request):
             except LogUserRoleForSemester.DoesNotExist:
                 return Response({'status':'failed','message':'Error fetching user/roles 2','data':''}, status=status.HTTP_400_BAD_REQUEST)
 
-            if request.method == 'POST' and request.data.get('type').upper() == 'APPROVE':
+            if request.method == 'POST' and request.data.get('type').upper() == 'APPROVE':  
                 roles_log.role_status = "APPROVED"
                 roles_log.approved_by = request.user
                 roles_log.save()
-                user.role = roles_log.roles
+                user.role.update(roles_log.roles) 
                 user.programme = roles_log.programme
                 user.department = roles_log.department
                 user.save()

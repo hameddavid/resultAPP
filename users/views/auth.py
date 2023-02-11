@@ -59,7 +59,8 @@ def userlogin(request):
                         auth = authenticate(request, email=email, password=password)
                         if auth is not None:
                             login(request,auth)
-                            if  f'"{session_semester_config()}.id"' not in user.role.keys():
+                            if  f'{session_semester_config().id}' not in user.role.keys():
+                                print(f"{user.role.keys()} in")
                                 user.role[session_semester_config().id] = []
                                 user.save()
                             request.session['settings'] = model_to_dict(session_semester_config())
