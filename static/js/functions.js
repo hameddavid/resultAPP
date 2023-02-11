@@ -1,5 +1,19 @@
 $(document).ready(function ($) {
   $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+  $(".dept").hide();
+  $("#hod").change(function () {
+    if (this.checked) {
+      $(".dept").show();
+      $(".prog").hide();
+      $(".adviser").hide();
+      $(".officer").hide();
+    } else {
+      $(".dept").hide();
+      $(".prog").show();
+      $(".adviser").show();
+      $(".officer").show();
+    }
+  });
 
   $("#btnSubmitRole").click(function (e) {
     e.preventDefault();
