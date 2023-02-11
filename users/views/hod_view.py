@@ -30,7 +30,7 @@ def view_lecturer_in_dpt(request):
 def view_lecturer_roles_in_dpt(request):
     curr_semester = session_semester_config()
     # owner, semester_session, programme, department, approved_by
-    lec_roles = LogUserRoleForSemester.objects.select_related('owner','programme').filter(department=6, semester_session=curr_semester.id)
+    lec_roles = LogUserRoleForSemester.objects.select_related('owner','programme').filter(department=request.user.department, semester_session=curr_semester.id)
     
     return render(request, 'hod/lecturer_roles_in_dpt.html', context={'roles':lec_roles})
 

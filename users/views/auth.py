@@ -74,28 +74,30 @@ def userlogin(request):
                             return JsonResponse({'data':'','status':'Failed','message':'Invalid username/password (or inactive account)'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
 
                     else:
-                        messages.error(request, f"Kindly activate your account for {session_semester_config().semester_name} {session_semester_config()} academic session")
+                        messages.error(request, )
                         user.otp = unique_user_otp_generator(6)
                         user.save()
                         helpers.semester_activation_email(user)
-                        return redirect('semester_activation')
+                        # return redirect('semester_activation')
+                        return JsonResponse({'url':'semester_activation','data':'','status':'success','message':f"Kindly activate your account for {session_semester_config().semester_name} {session_semester_config()} academic session"}, safe=False, status=status.HTTP_200_OK)
             else:
                 staff = Staff.objects.filter(email=email).first()
                 if staff is not None:
                     save_user = User.objects.create_user(email = email, password =password,is_active = False, semester_session_id=session_semester_config(),otp=unique_user_otp_generator(6))
                     save_user.save()
-                    return redirect('otp')
+                    # return redirect('otp')
+                    return JsonResponse({'url':'otp','data':'','status':'success','message':f"Kindly activate your account for {session_semester_config().semester_name} {session_semester_config()} academic session"}, safe=False, status=status.HTTP_200_OK)
+
                 else:
                     return JsonResponse({'data':'','status':'Failed','message':'Wrong staff email supplied'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            messages.error(request, 'No active session/semester, contact Admin')
-            return redirect('index')
+            return JsonResponse({'data':'','status':'Failed','message': "No active session/semester, contact Admin"}, safe=False, status=status.HTTP_400_BAD_REQUEST)
+
             
     except:
-        messages.error(request, 'User does not exist')
+        return JsonResponse({'data':'','status':'Failed','message': "User does not exist (catch)"}, safe=False, status=status.HTTP_400_BAD_REQUEST)
 
-    return redirect('index')
 
 
 
