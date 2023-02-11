@@ -1,5 +1,15 @@
 $(document).ready(function ($) {
   $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+  $(".dept").hide();
+  $("#hod").change(function () {
+    if (this.checked) {
+      $(".dept").show();
+      $(".prog").hide();
+    } else {
+      $(".dept").hide();
+      $(".prog").show();
+    }
+  });
 
   $("#btnSubmitRole").click(function (e) {
     e.preventDefault();
