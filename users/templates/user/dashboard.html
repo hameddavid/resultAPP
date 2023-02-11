@@ -103,25 +103,25 @@
                                 <p class="small mb-4">Check the box</p>
                                 <form method="post" id="formSubmitRole">
                                     {% csrf_token %}
-                                    <div class="form-check">
+                                    <div class="form-check lecturer">
                                         <input class="form-check-input" type="checkbox" value="LEC" name="roles[]" id="lecturer">
                                         <label class="form-check-label" for="lecturer">
                                             Lecturer
                                         </label>
                                     </div>
-                                    <div class="form-check">
+                                    <div class="form-check adviser">
                                         <input class="form-check-input" type="checkbox" value="LA" name="roles[]" id="adviser">
                                         <label class="form-check-label" for="adviser">
                                             Level Adviser
                                         </label>
                                     </div>
-                                    <div class="form-check">
+                                    <div class="form-check officer">
                                         <input class="form-check-input" type="checkbox" value="EO" name="roles[]" id="officer">
                                         <label class="form-check-label" for="officer">
                                             Exam Officer
                                         </label>
                                     </div>
-                                    <div class="form-check">
+                                    <div class="form-check hod">
                                         <input class="form-check-input" type="checkbox" value="HOD" name="roles[]" id="hod">
                                         <label class="form-check-label" for="hod">
                                             HOD

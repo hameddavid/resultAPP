@@ -5,9 +5,13 @@ $(document).ready(function ($) {
     if (this.checked) {
       $(".dept").show();
       $(".prog").hide();
+      $(".adviser").hide();
+      $(".officer").hide();
     } else {
       $(".dept").hide();
       $(".prog").show();
+      $(".adviser").show();
+      $(".officer").show();
     }
   });
 
