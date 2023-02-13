@@ -1,4 +1,6 @@
 {% load static %}
+<!-- Menu: main ul -->
+
 <div class="sidebar px-4 py-4 py-md-5 me-0">
     <div class="d-flex flex-column h-100">
         <a href="{% url 'dashboard' %}" class="mb-0 brand-icon">
@@ -15,16 +17,44 @@
 
         <ul class="menu-list flex-grow-1 mt-3">
             <li><a class="m-link" href="{% url 'dashboard' %}"><i class="icofont-home"></i> <span>Dashboard</span></a></li>
-            <li class="collapsed">
+             <!-- Menu: manage courses -->
+             {% if user.user_roles_lec %}
+             <li class="collapsed">
                 <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" href="#">
-                    <i class="icofont-law-document fs-5"></i> <span>Manage Course</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+                    <i class="icofont-law-document fs-5"></i> <span>Manage My Courses</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
                 <ul class="sub-menu collapse" id="dashboard-Components">
-                    <li><a class="ms-link" href="{% url 'add_courses' %}"> <span>Add Course</span></a></li>
                     <li><a class="ms-link" href="{% url 'approved_courses' %}"> <span>Approved Courses</span></a></li>
                     <li><a class="ms-link" href="{% url 'pending_courses' %}"> <span>Pending Courses</span></a></li>
                 </ul>
             </li>
+            {% endif %}
+            {% if user.user_roles_hod %}
+             <!-- Menu: manage lecturers in department by HOD -->
+          <li class="collapsed">
+            <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" href="#">
+                <i class="icofont-law-document fs-5"></i> <span>Manage Lecturers</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+            <ul class="sub-menu collapse" id="dashboard-Components">
+                <li><a class="ms-link" href="{% url 'view_lecturer_roles' %}"> <span>Lecturers</span></a></li>
+                <li><a class="ms-link" href="{% url 'approved_courses' %}"> <span>Approved Courses</span></a></li>
+                <li><a class="ms-link" href="{% url 'pending_courses' %}"> <span>Pending Courses</span></a></li>
+            </ul>
+        </li>
+        {% endif %}
+            {% if user.user_roles_eo %}
+             <!-- Menu: manage lecturers in department by HOD -->
+          <li class="collapsed">
+            <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" href="#">
+                <i class="icofont-law-document fs-5"></i> <span>Manage Results</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+            <ul class="sub-menu collapse" id="dashboard-Components">
+                <li><a class="ms-link" href="{% url 'view_lecturer_roles' %}"> <span>Get Summary</span></a></li>
+                <li><a class="ms-link" href="{% url 'approved_courses' %}"> <span>Get Broadsheet</span></a></li>
+            </ul>
+        </li>
+        {% endif %}
         </ul>
+
+         
+          
 
         <!-- Theme: Switch Theme -->
         <ul class="list-unstyled mb-0">
@@ -42,3 +72,4 @@
         </button>
     </div>
 </div>
+<!-- Sidebar menu ends -->

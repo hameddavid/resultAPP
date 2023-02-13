@@ -15,7 +15,7 @@ urlpatterns = [
 
 
     path('testuser', views.testUser, name='testuser'),
-    path('test_signal', view_aside.testSignalView, name='test-signal'),
+    path('test-bulk-create-view', view_aside.test_bulk_create_view, name='test_bulk_create_view'),
     path('test_score_input/<str:course>', view_aside.test_score_input, name='test-score-input'),
     # path('about/', views.about, name='about'),
     # path('profile/<str:pk>/', views.user_profile, name='userprofile'),

@@ -17,16 +17,15 @@ def test_score_input(request):
 
 
 
-def testSignalView(request):
+def test_bulk_create_view(request):
 
     # return JsonResponse({'status':'Success'}, safe=False)
     in_data = [
         {'name':'rice 100','quantity':'10','week':'1','price':'200'},
+        {'name':'rice 100','quantity':'10','week':'2','price':'300'},
         {'name':'beans 200','quantity':'5','week':'1','price':'1000'},
         {'name':'Gari 300','quantity':'5','week':'2','price':'1000'},
-        {'name':'dodo 400','quantity':'5','week':'2','price':'1000'},
-        {'name':'yam 500','quantity':'2','week':'2','price':'1000'},
-        {'name':'bread 600','quantity':'10','week':'2','price':'1000'},
+      
     ]
     # with transaction.atomic():
         # for index, row in enumerate(in_data, start=1):
@@ -37,7 +36,7 @@ def testSignalView(request):
         #     print(update)
         #     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
     bulk_pro = [Product(name=row['name'], quantity=row['quantity'], week=row['week'], price=row['price']) for row in in_data]
-    bulk_create = Product.objects.bulk_create(bulk_pro)
+    bulk_create = Product.objects.bulk_create(bulk_pro, ignore_conflicts=True)
     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
     for stud in bulk_create:
         print(stud.name)

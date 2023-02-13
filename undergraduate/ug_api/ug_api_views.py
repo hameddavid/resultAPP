@@ -12,6 +12,17 @@ from undergraduate.models import Faculty, Department,Programme,Student,Course,Cu
 import json
 from datetime import datetime
 
+@api_view(['GET', 'POST'])
+def correct_prog_dpt_diff(request):
+    with open("C:/Users/PC/Downloads/t_departments (1).json") as f:
+        records = json.load(f)
+    for record in records:
+        dpt = Department.objects.filter(department=record['department']).first()
+        prog = Programme.objects.filter(programme_id=record['programme_id']).first()
+        prog.department_id = dpt.id
+        prog.save()
+        
+    return Response({'data':records})
 
 # @login_required(login_url='index')
 @api_view(['GET', 'POST'])

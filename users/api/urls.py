@@ -10,6 +10,8 @@ urlpatterns = [
     path('hod-role-action', hod_api_view.approve_disapprove_user_roles_in_semester, name='hod_role_action'),
     path('broad', views.class_broadsheet_semester_session_list, name='broad'),
     path('ug-programmes', views.undergraduate_programme_list, name='ug_programmes'),
+    path('ug-course-list', views.undergraduate_course_list, name='ug_course_list'),
+    path('ug-course-list-curr-based', views.undergraduate_course_list_curriculum_base, name='ug_course_list_curr_based'),
     # path('role/<int:pk>/', views.check_user_role_in_semester, name='role'),
     # path('all', UserApiView.as_view()),
 

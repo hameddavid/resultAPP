@@ -9,8 +9,8 @@ from django.db.models import Prefetch
 
 
 from users.models import User,LogUserRoleForSemester
-from undergraduate.models import Programme, Department,Student,Registration
-from .serializers import (UserSerializer,UserRolesLoggerSerializer,
+from undergraduate.models import Programme, Department,Student,Registration,Course,Curriculum
+from .serializers import (UserSerializer,UserRolesLoggerSerializer,UndergraduateCourseSerializer,
 UserRolesLoggerSerializerHOD,ClassBroadsheetSemesterSessionSerializer,UndergraduateProgrammeSerializer)
 from base.baseHelper import session_semester_config, session_semester_config_always
 
@@ -274,6 +274,46 @@ class UndergraduateProgrammeList(generics.ListAPIView):
         return Response(serializer.data)
 
 undergraduate_programme_list = UndergraduateProgrammeList.as_view()
+
+
+
+class UndergraduateCourseList(generics.ListAPIView):
+    queryset = Course.objects.all()
+    serializer_class = UndergraduateCourseSerializer
+
+    def get_queryset(self):
+        return Course.objects.all().order_by('course_code')
+   
+    def list(self,request):
+        queryset = self.get_queryset()
+        serializer = UndergraduateCourseSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+undergraduate_course_list = UndergraduateCourseList.as_view()
+
+
+
+class UndergraduateCourseListCurriculumBased(generics.ListCreateAPIView):
+    authentication_classes = [authentication.SessionAuthentication, authentication.BasicAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Course.objects.all()
+    serializer_class = UndergraduateCourseSerializer
+
+    def get_queryset(self):
+        return Course.objects.filter(course_code__in=[row.course_code for row in
+         Curriculum.objects.filter(programme = '')]).order_by('course_code')
+   
+    def list(self, request):
+        queryset =  Course.objects.filter(course_code__in=[row.course_code for row in
+         Curriculum.objects.filter(programme = request.user.programme)]).order_by('course_code')
+        serializer = UndergraduateCourseSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        print(request.data)
+
+undergraduate_course_list_curriculum_base = UndergraduateCourseListCurriculumBased.as_view()
 
 
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
-from undergraduate.models import Programme, Department, Student, Registration
+from undergraduate.models import Programme, Department, Student, Registration,Course
 from base.models import Setting
 
 from users.models import User, LogUserRoleForSemester
@@ -75,5 +75,12 @@ class UndergraduateProgrammeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Programme
+        fields = "__all__"
+
+class UndergraduateCourseSerializer(serializers.ModelSerializer):
+    # ug_reg_stud_related = RegistrationStudSerializer(many = True, read_only=True)
+
+    class Meta:
+        model = Course
         fields = "__all__"
 

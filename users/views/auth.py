@@ -46,7 +46,6 @@ def userlogin(request):
             return redirect('dashboard')
     if request.method == "GET":
         return render(request, 'user/login.html')
-        
     try:
         if session_semester_config() is not None:
             if not session_semester_config().semester_open_close:
@@ -74,7 +73,7 @@ def userlogin(request):
                             return JsonResponse({'data':'','status':'Failed','message':'Invalid username/password (or inactive account)'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
 
                     else:
-                        messages.error(request, )
+                        # messages.error(request, )
                         user.otp = unique_user_otp_generator(6)
                         user.save()
                         helpers.semester_activation_email(user)

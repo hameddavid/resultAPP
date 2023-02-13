@@ -22,9 +22,9 @@ $(document).ready(function ($) {
           console.log(response);
           alert(response.message);
           if (response.status === "success") {
-            if (response.url === "semester_activation") {
+            if (response.url === "semester-activation") {
               setTimeout(function () {
-                window.location.href = "semester_activation";
+                window.location.href = "semester-activation";
               }, 1500);
             } else if (response.url === "otp") {
               setTimeout(function () {

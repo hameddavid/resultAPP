@@ -14,8 +14,10 @@ from base.baseHelper import session_semester_config, session_semester_config_alw
 
 @login_required(login_url='index')
 def get_student_reg(request):
-    if request.POST.get('course_code') is not None:
-        regs = Registration.objects.filter( Q(course_code=request.POST.get('course_code')) & Q(semester=session_semester_config().semester_code) & Q(session_id=session_semester_config().session))
+   
+    if 'course_code' in request.POST and request.POST['course_code']:
+        regs = Registration.objects.filter( Q(course_code=request.POST.get('course_code')) &
+         Q(semester=session_semester_config().semester_code) & Q(session_id=session_semester_config().session))
         context = {'regs':regs, 'count':regs.count(), 'course':request.POST.get('course_code')}
         return render(request, 'course/studReg.html', context)
     else :

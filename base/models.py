@@ -248,10 +248,14 @@ class Curriculum(models.Model):
 
 # ########################### Study Signal, bulk-create ... 
 class Product(models.Model):
-    name = models.CharField(max_length=150)
+    name = models.CharField(max_length=150, unique=True)
     quantity = models.IntegerField()
     week = models.IntegerField()
     price = models.FloatField()
+
+    class Meta:
+         unique_together = ('name','quantity')
+
 
 class Sale(models.Model):
     product = models.IntegerField()
