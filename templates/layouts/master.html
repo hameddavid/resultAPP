@@ -9,14 +9,17 @@
     <!-- <title>@yield('title')</title> -->
     <title>{% block title %} {% endblock title %}</title>
     <link rel="icon" href="../run_logo.png" type="image/x-icon"> <!-- Favicon-->
+    
     <!-- plugin css file  -->
     <!-- <link rel="stylesheet" href="{% static 'datatables/responsive.dataTables.min.css' %}">
     <link rel="stylesheet" href="{% static 'datatables/dataTables.bootstrap5.min.css' %}"> -->
     <!-- project css file  -->
     <link rel="stylesheet" href="{% static 'styles/my-task.style.min.css' %}">
+    <link rel="stylesheet" href="{% static 'js/select2/css/select2.min.css' %}">
     <!-- Jquery Core Js -->
     <script src="{% static 'js/libscripts.bundle.js' %}"></script>
     <script src="{% static 'js/blockUI.js' %}"></script>
+    <script src="{% static 'js/select2/js/select2.min.js' %}"></script>
 </head>
 <body onload='checkInfo()'>
     <!-- @yield('content') -->
@@ -33,11 +36,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="inviteby_email">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control">
-                            <button class="btn btn-secondary" type="button">Submit</button>
-                        </div>
+                    <div class="mb-2">
+                        <select class="form-control form-control-md myselect" style="width: 100%" name="courses[]" multiple="multiple">
+                        </select><hr>
+                        <button class="btn btn-primary" type="button">Submit</button>
                     </div>
                 </div>
             </div>
@@ -59,8 +61,25 @@
         const checkInfo = () => {
             $(document).ready(function ($) {
                 //$.blockUI()
-            });
-        }
+                $.ajax({
+                    url: '/user-api/ug-course-list-curr-based',
+                    method: 'GET',
+                    success: function(response){
+                        var data = $.map(response, function (obj) {
+                            obj.id = obj.id || obj.course_id; 
+                            obj.text = obj.text || obj.course_code;
+                            return obj;
+                        });
+                        $('.myselect').select2({
+                            placeholder: 'Select Course(s)',
+                            theme: "classic",
+                            data: data,
+                            dropdownParent: $('#addCourse')
+                        });
+                    }
+                })
+            });            
+        }        
     </script>
 </body>
 </html> 

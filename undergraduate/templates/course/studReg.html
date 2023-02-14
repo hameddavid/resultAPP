@@ -23,50 +23,52 @@
                       <div class="col-sm-12">
                             <div class="card mb-3">
                                 <div class="card-body">
-                                    <table id="myProjectTable" class="table table-hover align-middle mb-0" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Matric Number</th> 
-                                                <th>Course Code</th> 
-                                                <th>Session</th>   
-                                                <th>Semester</th>   
-                                                <th>Actions</th>  
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for reg in regs %}
-                                            <tr>
-                                                <td>
-                                                    <span class="fw-bold">{{forloop.counter}}</span>
-                                                </td>
-                                                
-                                               <td>
-                                                   <span class="fw-bold ms-1"> {{reg.matric_number_fk}}</span>
-                                               </td>
-                                               
-                                               <td>
-                                                <span class="fw-bold ms-1"> {{reg.course_code}}</span>
-                                               </td>
-                                               <td>
-                                                {{reg.session_id}}
-                                               </td>
-                                               <td>
-                                                {{reg.status}}
-                                               </td>
-                                                <td>
-                                                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                            
-                                                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="">View <i class="icofont-eye-open text-success"></i></button>
-                                                            
-                                                        </div>
-                                                    
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                    
+                                    <form method="post" id="inputScoreForm">
+                                        <table id="myProjectTable" class="table table-hover align-middle mb-0" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Matric Number</th> 
+                                                    <th>Course Code</th> 
+                                                    <th>Session</th>   
+                                                    <th>Score</th>   
+                                                    <th>Grade</th>  
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for reg in regs %}
+                                                    <tr>
+                                                        <td>
+                                                            <span class="fw-bold">{{forloop.counter}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="fw-bold ms-1"> {{reg.matric_number_fk}}</span>
+                                                        </td>
+                                                        
+                                                        <td>
+                                                            <span class="fw-bold ms-1"> {{reg.course_code}}</span>
+                                                        </td>
+                                                        <td>
+                                                            {{reg.session_id}}
+                                                        </td>
+                                                        <td>
+                                                            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                                                <input class="form-control form-control-md" name="score[]" type="text" required>     
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                                                <input type="text" class="form-control form-control-md" readonly>     
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                            <button type="submit" id="btnScoreInput" class="btn btn-primary">Submit</button>    
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                       </div>
@@ -75,48 +77,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Edit Department-->
-    <div class="modal fade" id="depedit" tabindex="-1"  aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title  fw-bold" id="depeditLabel"> Department Edit</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="exampleFormControlInput11111" class="form-label">Department Name</label>
-                        <input type="text" class="form-control" id="exampleFormControlInput11111" value="Web Development"> 
-                    </div>
-                    <div class="deadline-form">
-                        <form>
-                            <div class="row g-3 mb-3">
-                              <div class="col-sm-6">
-                                <label class="form-label">Department Head</label>
-                                <select class="form-select">
-                                    <option selected>Joan Dyer</option>
-                                    <option value="1">Ryan Randall</option>
-                                    <option value="2">Phil Glover</option>
-                                    <option value="3">Victor Rampling</option>
-                                    <option value="4">Sally Graham</option>
-                                </select>
-                              </div>
-                              <div class="col-sm-6">
-                                <label for="deptwo48" class="form-label">Employee UnderWork</label>
-                                <input type="text" class="form-control" id="deptwo48" value="40">
-                              </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div> 
 
     <script src="{% static 'js/apexcharts.bundle.js' %}"></script>
     <script src="{% static 'js/dataTables.bundle.js' %}"></script>
