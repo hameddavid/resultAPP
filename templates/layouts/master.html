@@ -37,9 +37,11 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-2">
-                        <select class="form-control form-control-md myselect" style="width: 100%" name="courses[]" multiple="multiple">
-                        </select><hr>
-                        <button class="btn btn-primary" type="button">Submit</button>
+                        <form id="addCourseForm" method="POST">
+                            <select class="form-control form-control-md myselect" style="width: 100%" name="courses[]" multiple="multiple">
+                            </select><hr>
+                            <button id="btnAddCourse" class="btn btn-primary" type="submit">Submit</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -82,4 +84,5 @@
         }        
     </script>
 </body>
+<script src="{% static 'js/functions.js' %}"></script>
 </html> 

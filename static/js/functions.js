@@ -100,4 +100,34 @@ $(document).ready(function ($) {
       },
     });
   });
+
+  $("#btnAddCourse").click(function (e){
+    e.preventDefault();
+    var formData = $("#addCourseForm").serialize();
+    console.log(formData);
+    var type = "POST";
+    var ajaxurl = "";
+    $.ajax({
+      type: type,
+      url: ajaxurl,
+      data: formData,
+      dataType: "json",
+      beforeSend: function () {
+        $("#btnAddCourse").html('<i class="fa fa-spinner fa-spin"></i>');
+        $("#btnAddCourse").prop("disabled", true);
+      },
+      success: function (response) {
+        console.log(response);
+        alert(response.message);
+        $("#btnAddCourse").html("Submit");
+        $("#btnAddCourse").prop("disabled", false);
+      },
+      error: function (response) {
+        console.log(response);
+        $("#btnAddCourse").html("Submit");
+        $("#btnAddCourse").prop("disabled", false);
+        alert(response.responseJSON.message);
+      },
+    });
+  })
 });
