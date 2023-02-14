@@ -104,9 +104,10 @@ $(document).ready(function ($) {
   $("#btnAddCourse").click(function (e){
     e.preventDefault();
     var formData = $("#addCourseForm").serialize();
+     if(formData === null || formData == "") return false
     console.log(formData);
     var type = "POST";
-    var ajaxurl = "";
+    var ajaxurl = "/show";
     $.ajax({
       type: type,
       url: ajaxurl,
