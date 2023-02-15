@@ -139,8 +139,9 @@ $(document).ready(function ($) {
 
     function submitInputScoreForm(e) {
       var formData = $("#inputScoreForm").serialize();
+      console.log(formData)
       var type = "POST";
-      var ajaxurl = "";
+      var ajaxurl = "/show";
 
       $.ajax({
         type: type,
