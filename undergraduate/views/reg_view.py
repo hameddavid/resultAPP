@@ -23,3 +23,5 @@ def get_student_reg(request):
     else :
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', 'approved_coures'))
 
+
+

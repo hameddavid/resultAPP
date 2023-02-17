@@ -11,7 +11,7 @@ from django.db.models import Prefetch
 from users.models import User,LogUserRoleForSemester
 from undergraduate.models import Programme, Department,Student,Registration
 from .serializers import (UserSerializer,UserRolesLoggerSerializer,
-UserRolesLoggerSerializerHOD,ClassBroadsheetSemesterSessionSerializer,UndergraduateProgrammeSerializer)
+UserRolesLoggerSerializerHOD)
 from base.baseHelper import session_semester_config, session_semester_config_always
 
 

@@ -328,6 +328,7 @@ class RegSummary(models.Model):
     
     class Meta:
         db_table = "ug_reg_summary"
+        unique_together = ('matric_number_fk','semester','session_id') 
 
     def __str__(self) -> str:
         return f"{self.matric_number_fk}  {self.session_id} {self.semester}"
@@ -404,7 +405,6 @@ class Session(models.Model):
 
 
 
-
 class LecturerCourse(models.Model):
     class Status(models.TextChoices):
         PENDING = "PENDING", 'PENDING' 
@@ -413,6 +413,8 @@ class LecturerCourse(models.Model):
     lecturer = models.ForeignKey('users.User', related_name='LecCourse_lecturer_rn', to_field='email', on_delete=models.RESTRICT, null=False,blank=False)
     status =  models.CharField(max_length=15, choices=Status.choices, default=Status.PENDING)
     settings = models.ForeignKey('base.Setting', related_name='LecCourse_settings_rn', on_delete=models.RESTRICT, null=False,blank=False)
+    programme = models.ForeignKey('undergraduate.Programme', on_delete=models.RESTRICT)
+    department = models.ForeignKey('undergraduate.Department', on_delete=models.RESTRICT)
     approved_by = models.ForeignKey('users.User', related_name='LecCourse_approved_by_rn', to_field='email',blank=True,null=True, on_delete=models.RESTRICT)
     approved_at = models.DateTimeField(auto_now_add=True)
     approval_details = models.TextField(blank=True, null=True)

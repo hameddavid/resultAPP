@@ -12,7 +12,6 @@ from users import helpers
 from base.baseHelper import session_semester_config, session_semester_config_always
 from users.userForm import UserForm
 from users.models import User,LogUserRoleForSemester
-from course.models import LecturerCourse,Course
 import json, os, re,random,string
 from django.forms.models import model_to_dict
 from undergraduate.models import Course, Curriculum,Student,Department,Programme,RegSummary,Student,Registration
@@ -35,4 +34,7 @@ def view_lecturer_roles_in_dpt(request):
      semester_session=curr_semester.id).exclude(owner=request.user)
     
     return render(request, 'hod/lecturer_roles_in_dpt.html', context={'roles':lec_roles})
+
+
+
 

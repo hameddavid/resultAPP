@@ -107,7 +107,7 @@ $(document).ready(function ($) {
      if(formData === null || formData == "") return false
     console.log(formData);
     var type = "POST";
-    var ajaxurl = "/show";
+    var ajaxurl = "/ug/api/ug-course-list-curr-based";
     $.ajax({
       type: type,
       url: ajaxurl,
@@ -141,7 +141,7 @@ $(document).ready(function ($) {
       var formData = $("#inputScoreForm").serialize();
       console.log(formData)
       var type = "POST";
-      var ajaxurl = "/show";
+      var ajaxurl = "/ug/api/submit-student-reg-score";
 
       $.ajax({
         type: type,

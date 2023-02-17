@@ -35,8 +35,7 @@
                 <i class="icofont-law-document fs-5"></i> <span>Manage Lecturers</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
             <ul class="sub-menu collapse" id="dashboard-Components">
                 <li><a class="ms-link" href="{% url 'view_lecturer_roles' %}"> <span>Lecturers</span></a></li>
-                <li><a class="ms-link" href="{% url 'approved_courses' %}"> <span>Approved Courses</span></a></li>
-                <li><a class="ms-link" href="{% url 'pending_courses' %}"> <span>Pending Courses</span></a></li>
+                <li><a class="ms-link" href="{% url 'view_lecturer_courses_in_semester' %}"> <span>Lecturers & Courses</span></a></li>
             </ul>
         </li>
         {% endif %}

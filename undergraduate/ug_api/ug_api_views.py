@@ -8,7 +8,7 @@ from rest_framework import permissions
 from base.models import Setting,Staff
 from .ug_serializer import SettingSerializer
 from undergraduate.models import Faculty, Department,Programme,Student,Course,Curriculum,Registration,RegSummary
-
+from base.baseHelper import session_semester_config, session_semester_config_always
 import json
 from datetime import datetime
 
@@ -24,41 +24,65 @@ def correct_prog_dpt_diff(request):
         
     return Response({'data':records})
 
+
 # @login_required(login_url='index')
 @api_view(['GET', 'POST'])
 def loadRegistrationsJson(request):   
     # return Response({'data':''}) 
     # with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/t_registrations.json") as f:
     jamb_no_list = []
-    with open("C:/Users/PC/Downloads/t_registrations.json") as f:
+    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/t_registrations.json") as f:
         records = json.load(f)
+   
+        reg_list = [Registration(
+        matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']) ,
+        course_code = reg['s_course_code'],
+        semester = session_semester_config().semester_code,
+        session_id = session_semester_config().session,
+        unit = reg['s_course_unit'],
+        score = -1,
+        status = reg['s_course_status'] ,
+        level = reg['registration_level'],
+        unit_id = reg['s_course_id'].split('*')[1]
+        )
+         for reg in records[:22]]
+        bulk_create = Registration.objects.bulk_create(reg_list, ignore_conflicts=True)
+        new_data_list = []
+        done_course_code = []
+        for item in bulk_create:
+            filter_list = list(filter(lambda row:row['matric_number'] == item.matric_number_fk and 
+            item.course_code not in done_course_code , new_data_list))
+            if len(filter_list)>0:
+                filter_list[0]['courses_taken'] = int(filter_list[0]['courses_taken'])+ 1
+                filter_list[0]['tnur'] = int(filter_list[0]['tnur'])+ int(item.unit)
+                filter_list[0]['ctnur'] = int(filter_list[0]['ctnur'])+ int(item.unit)
+                done_course_code.append(item.course_code)
+            else:
+                new_data_list.append({
+                    'matric_number': item.matric_number_fk,'semester':item.semester,
+                    'session_id' : item.session_id,'courses_taken':1,'courses_passed':0,'courses_failed':0,'tnur':item.unit,'tnup':0,
+                    'tnuf':0,'wcrp':0,'gpa':0,'ctnur':item.unit,'ctnup':0,'cgpa':0,'ctcp':0,'ctcup':0,'cteup':0, 'acad_status':'', })
 
-    for record in records:   
-        if  record['s_matric_number'].upper().startswith('RUN'):
-            continue
-        if record['s_matric_number'] not in jamb_no_list:
-            jamb_no_list.append(record['s_matric_number'])
-        # fac = Registration( 
-        #    matric_number_fk = Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
-        #    semester = record['semester'] if 'semester' in record.keys() else None,
-        #    session_id = record['session_id'] if 'session_id' in record.keys() else None,
-        #    course_code = record['course_code'] if 'course_code' in record.keys() else None,
-        #    status = record['status'] if 'status' in record.keys() else None,
-        #    unit = Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit if Course.objects.filter(course_code=record['course_code'], unit_id=record['unit_id']).first().unit else 0,
-        #    score = record['score'] if 'score' in record.keys() else None,
-        #    grade = record['grade'] if 'grade' in record.keys() else None,
-        #    last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
-        #    last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
-        #    deleted = record['deleted'] if 'deleted' in record.keys() else None,
-        #    unit_id = record['unit_id'] if 'unit_id' in record.keys() else None,
-        #    app_user_id = record['app_user_id'] if 'app_user_id' in record.keys() else None, 
-
-        #      last_updated_by_new=request.user,
-         
-        #     )
-        # fac.save()
-        
-    return Response({'data':jamb_no_list})
+        reg_list = [RegSummary(
+        matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']) ,
+        course_code = reg['s_course_code'],
+        semester = session_semester_config().semester_code,
+        session_id = session_semester_config().session,
+        unit = reg['s_course_unit'],
+        score = -1,
+        status = reg['s_course_status'] ,
+        level = reg['registration_level'],
+        unit_id = reg['s_course_id'].split('*')[1]
+        )
+         for reg in records[:22]]
+        bulk_create = Registration.objects.bulk_create(reg_list, ignore_conflicts=True)
+                
+# 	   	  remarks	
+# last_updated_by_old	last_updated_date_old	 deleted 	 	
+# 	 	 	 	 created	 updated	
+# last_updated_by_new_id	 matric_number_fk_id		
+      
+        return Response({'data':records[:22]})
     
     return Response({'data':records[0:4]})
 

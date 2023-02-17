@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from undergraduate.models import LecturerCourse, Course
+from undergraduate.models import (LecturerCourse,Course,Registration,Student,Programme)
 from base.models import Setting
 
 
@@ -33,4 +33,36 @@ class LecturerCourseSerializer(serializers.ModelSerializer):
         # instance.save()
         # return instance
 
-    
+
+
+
+class RegistrationStudSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = Registration
+        fields = ['course_code','status','score','unit','session_id','semester']
+
+
+class ClassBroadsheetSemesterSessionSerializer(serializers.ModelSerializer):
+    ug_reg_stud_related = RegistrationStudSerializer(many = True, read_only=True)
+
+
+    class Meta:
+        model = Student
+        fields = ['matric_number','surname','firstname','ug_reg_stud_related']
+
+
+class UndergraduateProgrammeSerializer(serializers.ModelSerializer):
+    # ug_reg_stud_related = RegistrationStudSerializer(many = True, read_only=True)
+
+    class Meta:
+        model = Programme
+        fields = "__all__"
+
+class UndergraduateCourseSerializer(serializers.ModelSerializer):
+    # ug_reg_stud_related = RegistrationStudSerializer(many = True, read_only=True)
+
+    class Meta:
+        model = Course
+        fields = "__all__"

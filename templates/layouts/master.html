@@ -64,11 +64,12 @@
             $(document).ready(function ($) {
                 //$.blockUI()
                 $.ajax({
-                    url: '/user-api/ug-course-list-curr-based',
+                    url: '/ug/api/ug-course-list-curr-based',
                     method: 'GET',
                     success: function(response){
                         var data = $.map(response, function (obj) {
-                            obj.id = obj.id || obj.course_id; 
+                            // obj.id = obj.id || obj.course_id; 
+                            obj.id = obj.id || obj.course_code; 
                             obj.text = obj.text || obj.course_code;
                             return obj;
                         });
