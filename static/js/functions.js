@@ -101,10 +101,10 @@ $(document).ready(function ($) {
     });
   });
 
-  $("#btnAddCourse").click(function (e){
+  $("#btnAddCourse").click(function (e) {
     e.preventDefault();
     var formData = $("#addCourseForm").serialize();
-     if(formData === null || formData == "") return false
+    if (formData === null || formData == "") return false;
     console.log(formData);
     var type = "POST";
     var ajaxurl = "/ug/api/ug-course-list-curr-based";
@@ -122,6 +122,7 @@ $(document).ready(function ($) {
         alert(response.message);
         $("#btnAddCourse").html("Submit");
         $("#btnAddCourse").prop("disabled", false);
+        location.reload();
       },
       error: function (response) {
         console.log(response);
@@ -130,7 +131,7 @@ $(document).ready(function ($) {
         alert(response.responseJSON.message);
       },
     });
-  })
+  });
 
   $("#btnScoreInput").click(function () {
     $("#inputScoreForm").validate({
@@ -139,7 +140,7 @@ $(document).ready(function ($) {
 
     function submitInputScoreForm(e) {
       var formData = $("#inputScoreForm").serialize();
-      console.log(formData)
+      console.log(formData);
       var type = "POST";
       var ajaxurl = "/ug/api/submit-student-reg-score";
 
@@ -166,29 +167,43 @@ $(document).ready(function ($) {
     }
   });
 
-   $(".scoreTable").on("focusout", ".score", function(){
-    const score = $(this).val()
-    const grade = getGrade(score)
-    const tr = $(this).closest("tr")
-    const current_row = tr.index() + 1
-    $('#'+current_row).val(grade)
-  })
+  $(".scoreTable").on("focusout", ".score", function () {
+    const score = $(this).val();
+    const grade = getGrade(score);
+    const tr = $(this).closest("tr");
+    const current_row = tr.index() + 1;
+    $("#" + current_row).val(grade);
+  });
 
   const getGrade = (score) => {
-    if(score >= 70){
-      return 'A'
+    if (score >= 70) {
+      return "A";
+    } else if (score < 70 && score > 59) {
+      return "B";
+    } else if (score < 60 && score > 49) {
+      return "C";
+    } else if (score < 50 && score > 39) {
+      return "D";
+    } else {
+      return "F";
     }
-    else if(score < 70 && score > 59){
-      return 'B'
-    }
-    else if(score < 60 && score > 49){
-      return 'C'
-    }
-    else if(score < 50 && score > 39){
-      return 'D'
-    }
-    else {
-      return 'F'
-    }
-  }
+  };
+
+  $(".view_course").click(function () {
+    $("#viewCourse").modal("show");
+    const email = $(this).data("email");
+    $.ajax({
+      url: "/ug/api/get-user-courses-in-semester-for-approval",
+      method: "POST",
+      data: { email: email },
+      success: function (response) {
+        console.log(response);
+        // var data = $.map(response, function (obj) {
+        //   obj.id = obj.id || obj.course_code;
+        //   obj.text = obj.text || obj.course_code;
+        //   return obj;
+        // });
+      },
+    });
+  });
 });
