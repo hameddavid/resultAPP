@@ -41,25 +41,24 @@
                                                 <td>
                                                     <span class="fw-bold">{{forloop.counter}}</span>
                                                 </td>
-                                                
-                                               <td>
+                                                <td>
                                                    <span class="fw-bold ms-1"> {{role.lecturer}}</span>
-                                               </td>
+                                                </td>
                                                 <td>
                                                     {{role.status}}
                                                 </td>
                                                 <td>
-                                                <span class="fw-bold ms-1"> {{role.settings.session}}</span>
-                                               </td>
+                                                    <span class="fw-bold ms-1"> {{role.settings.session}}</span>
+                                                </td>
                                                 <td>
-                                                <span class="fw-bold ms-1"> {{role.settings.semester_name}}</span>
-                                               </td>
-                                               <td>
-                                                {{role.created}} 
-                                               </td>
+                                                    <span class="fw-bold ms-1"> {{role.settings.semester_name}}</span>
+                                                </td>
                                                 <td>
-                                                    <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                        <button data-bs-toggle="modal" data-bs-target="#viewCourse" class="btn btn-outline-success">View <i class="icofont-eye-open text-info"></i></button>
+                                                    {{role.created}} 
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button data-email="{{role.lecturer}}" class="btn btn-outline-success view_course">View <i class="icofont-eye-open text-info"></i></button>
                                                     </div>
                                                 </td>
                                             </tr>
