@@ -24,13 +24,14 @@ from datetime import datetime
 def approve_disapprove_user_courses_in_semester(request):
     # ug/api/approve-disapprove-user-courses-in-semester
     try:
-        if 'email' in request.data and request.data['email'] and len(request.data.getlist('courses[]'))>0:
+        if 'email' in request.POST and request.POST['email'] and len(request.POST.getlist('courses[]'))>0:
             if request.data['type'].upper() == 'APPROVE':
                 with transaction.atomic():
                     course_list = LecturerCourse.objects.select_for_update().filter(lecturer=request.data['email'],settings=session_semester_config().id)
                     for course in course_list:
                         course.status = 'APPROVED'
                         course.save()
+                    return Response({'status':'success','message':'Course(s) approved!','data':''}, status=status.HTTP_200_OK)
             elif request.data['type'].upper() == 'DISAPPROVE':
                 with transaction.atomic():
                     course_list = LecturerCourse.objects.select_for_update().filter(lecturer=request.data['email'],settings=session_semester_config().id)

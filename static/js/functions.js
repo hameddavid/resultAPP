@@ -189,21 +189,59 @@ $(document).ready(function ($) {
     }
   };
 
-  $(".view_course").click(function () {
+  $(".view_course").click(function (e) {
     $("#viewCourse").modal("show");
+    $(".show_courses").html("");
     const email = $(this).data("email");
+    $("#lec_email").html(email);
+    $("#email").val(email);
     $.ajax({
       url: "/ug/api/get-user-courses-in-semester-for-approval",
       method: "POST",
+      async: false,
       data: { email: email },
       success: function (response) {
         console.log(response);
-        // var data = $.map(response, function (obj) {
-        //   obj.id = obj.id || obj.course_code;
-        //   obj.text = obj.text || obj.course_code;
-        //   return obj;
-        // });
+        $.map(response.data, function (obj) {
+          $(".show_courses").append(
+            `<input name="courses[]" value= "${obj.id}" type="checkbox" required/> ` +
+              obj.course_code +
+              "<br />"
+          );
+        });
       },
     });
+    e.stopImmediatePropagation();
+  });
+
+  $("#btnApproveCourse").click(function (e) {
+    e.preventDefault();
+    var formData = $("#formApproveCourse").serialize();
+    console.log(formData);
+    var type = "POST";
+    var ajaxurl = "/ug/api/approve-disapprove-user-courses-in-semester";
+    $.ajax({
+      type: type,
+      url: ajaxurl,
+      data: formData,
+      async: false,
+      dataType: "json",
+      beforeSend: function () {
+        $("#btnApproveCourse").html('<i class="fa fa-spinner fa-spin"></i>');
+        $("#btnApproveCourse").prop("disabled", true);
+      },
+      success: function (response) {
+        console.log(response);
+        alert(response.message);
+        location.reload();
+      },
+      error: function (response) {
+        console.log(response);
+        alert(response.responseJSON.message);
+        $("#btnApproveCourse").prop("disabled", false);
+        $("#btnApproveCourse").html("Approve");
+      },
+    });
+    e.stopImmediatePropagation();
   });
 });
