@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from django.db import transaction
+from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import  api_view
 from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
@@ -46,12 +47,12 @@ def approve_disapprove_user_courses_in_semester(request):
 
 
 @login_required(login_url='index')
-@api_view(['GET'])
+@api_view(['POST'])
 def get_user_courses_in_semester_for_approval(request):
     # ug/api/get-user-courses-in-semester-for-approval
-    if 'email' in request.data and request.data['email']:
-        courses = LecturerCourse.objects.filter(lecturer=request.data['email'],settings=session_semester_config().id)
-        return Response({'status':'success','message':'Courses added successfully!','data':courses}, status=status.HTTP_200_OK)
+    if 'email' in request.POST.keys() and request.POST['email']:
+        courses = [{'id':row.id,'course_code':row.course_code,'lecturer':row.lecturer.email} for row in LecturerCourse.objects.filter(lecturer=request.POST['email'],settings=session_semester_config().id)]
+        return Response({'status':'success','message':'Courses gotten successfully!','data':courses}, status=status.HTTP_200_OK)
 
     return Response({'status':'failed','message':'Error fetching courses','data':''}, status=status.HTTP_400_BAD_REQUEST)
 
