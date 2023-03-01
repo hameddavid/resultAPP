@@ -135,12 +135,13 @@ $(document).ready(function ($) {
     });
   });
 
-  $("#btnScoreInput").click(function () {
+  $("#_btnScoreInput").click(function () {
     $("#inputScoreForm").validate({
       submitHandler: submitInputScoreForm,
     });
 
     function submitInputScoreForm(e) {
+      var table = $("#inputScoreTable").DataTable();
       var formData = $("#inputScoreForm").serialize();
       console.log(formData);
       var type = "POST";
@@ -245,5 +246,25 @@ $(document).ready(function ($) {
       },
     });
     e.stopImmediatePropagation();
+  });
+
+  $("#inputScoreForm").on("submit", function (e) {
+    var table = $("#inputScoreTable").DataTable();
+    var form = this;
+    var params = table.$("input").serializeArray();
+
+    $.each(params, function () {
+      if (!$.contains(document, form[this.name])) {
+        $(form).append(
+          $("<input>")
+            .attr("type", "hidden")
+            .attr("name", this.name)
+            .val(this.value)
+        );
+      }
+    });
+    $("#example-console-form").text($(form).serialize());
+    $('input[type="hidden"]', form).remove();
+    e.preventDefault();
   });
 });
