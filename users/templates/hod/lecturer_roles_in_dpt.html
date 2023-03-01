@@ -40,19 +40,21 @@
                                                 <td>
                                                     <span class="fw-bold">{{forloop.counter}}</span>
                                                 </td>
-                                                
-                                               <td>
+                                                <td>
                                                    <span class="fw-bold ms-1"> {{role.owner}}</span>
-                                               </td>
-                                               
-                                               <td>
-                                                <span class="fw-bold ms-1"> {{role.programme}}</span>
-                                               </td>
-                                               <td>
-                                                {{role.roles}}
-                                               </td>
-                                               <td>
-                                                {{role.role_status}}
+                                                </td>
+                                                <td>
+                                                    <span class="fw-bold ms-1"> {{role.programme}}</span>
+                                                </td>
+                                                <td>
+                                                    {{role.roles}}
+                                                </td>
+                                                <td>
+                                                    {% if role.role_status == 'PENDING' %}
+                                                        <span class="badge bg-danger">{{role.role_status}}</span>
+                                                    {% else  %}
+                                                        <span class="badge bg-success">{{role.role_status}}</span>
+                                                    {% endif %}
                                                </td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Basic outlined example">

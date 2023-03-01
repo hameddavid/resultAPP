@@ -73,6 +73,7 @@ $(document).ready(function ($) {
         alert(response.responseJSON.message);
       },
     });
+    e.stopImmediatePropagation();
   });
 
   $(".disapprove").click(function (e) {
@@ -99,6 +100,7 @@ $(document).ready(function ($) {
         alert(response.responseJSON.message);
       },
     });
+    e.stopImmediatePropagation();
   });
 
   $("#btnAddCourse").click(function (e) {
