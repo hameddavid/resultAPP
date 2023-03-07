@@ -15,7 +15,7 @@ from users.models import User
 from course.models import LecturerCourse,Course
 import json, os, re,random,string
 from django.forms.models import model_to_dict
-from undergraduate.models import Course, Curriculum,Student,Department,Programme,RegSummary,Student,Registration
+from undergraduate.models import Course, Curriculum,Student,Department,Programme,RegSummary,Registration
 from collections import Counter
 from rest_framework import status, generics
 

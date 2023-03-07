@@ -161,7 +161,7 @@ class Curriculum(models.Model):
 
 
     def __str__(self) -> str:
-        return f"{self.program} {self.course_code} {self.course_reg_level}"
+        return f"{self.programme} {self.course_code} {self.course_reg_level}"
 
 
 

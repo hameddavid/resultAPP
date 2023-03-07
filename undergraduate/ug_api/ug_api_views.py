@@ -33,54 +33,34 @@ def loadRegistrationsJson(request):
     jamb_no_list = []
     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/t_registrations.json") as f:
         records = json.load(f)
-   
+        settings = session_semester_config()
         reg_list = [Registration(
-        matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']) ,
-        course_code = reg['s_course_code'],
-        semester = session_semester_config().semester_code,
-        session_id = session_semester_config().session,
-        unit = reg['s_course_unit'],
-        score = -1,
-        status = reg['s_course_status'] ,
-        level = reg['registration_level'],
-        unit_id = reg['s_course_id'].split('*')[1]
+        matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']) ,course_code = reg['s_course_code'],
+        semester = settings.semester_code,session_id = settings.session, unit = reg['s_course_unit'],
+        score = -1, status = reg['s_course_status'] ,level = reg['registration_level'],unit_id = reg['s_course_id'].split('*')[1]
         )
          for reg in records[:22]]
         bulk_create = Registration.objects.bulk_create(reg_list, ignore_conflicts=True)
         new_data_list = []
-        done_course_code = []
         for item in bulk_create:
-            filter_list = list(filter(lambda row:row['matric_number'] == item.matric_number_fk and 
-            item.course_code not in done_course_code , new_data_list))
+            filter_list = list(filter(lambda row:row['matric_number'] == item.matric_number_fk , new_data_list))
             if len(filter_list)>0:
                 filter_list[0]['courses_taken'] = int(filter_list[0]['courses_taken'])+ 1
                 filter_list[0]['tnur'] = int(filter_list[0]['tnur'])+ int(item.unit)
                 filter_list[0]['ctnur'] = int(filter_list[0]['ctnur'])+ int(item.unit)
-                done_course_code.append(item.course_code)
             else:
                 new_data_list.append({
                     'matric_number': item.matric_number_fk,'semester':item.semester,
                     'session_id' : item.session_id,'courses_taken':1,'courses_passed':0,'courses_failed':0,'tnur':item.unit,'tnup':0,
                     'tnuf':0,'wcrp':0,'gpa':0,'ctnur':item.unit,'ctnup':0,'cgpa':0,'ctcp':0,'ctcup':0,'cteup':0, 'acad_status':'', })
 
-        reg_list = [RegSummary(
-        matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']) ,
-        course_code = reg['s_course_code'],
-        semester = session_semester_config().semester_code,
-        session_id = session_semester_config().session,
-        unit = reg['s_course_unit'],
-        score = -1,
-        status = reg['s_course_status'] ,
-        level = reg['registration_level'],
-        unit_id = reg['s_course_id'].split('*')[1]
-        )
-         for reg in records[:22]]
-        bulk_create = Registration.objects.bulk_create(reg_list, ignore_conflicts=True)
-                
-# 	   	  remarks	
-# last_updated_by_old	last_updated_date_old	 deleted 	 	
-# 	 	 	 	 created	 updated	
-# last_updated_by_new_id	 matric_number_fk_id		
+        reg_list2 = [RegSummary(
+        matric_number_fk = Student.objects.get(matric_number = stud['matric_number']) ,semester = stud['semester'],
+        session_id = stud['session_id'], courses_taken = stud['courses_taken'],
+        courses_passed = stud['courses_passed'], courses_failed = stud['courses_failed'] ,
+        tnur = stud['tnur'], tnup = stud['tnup'], tnuf = stud['tnuf'],wcrp = stud['wcrp'],gpa = stud['gpa'],
+        ) for stud in new_data_list]
+        bulk_create = RegSummary.objects.bulk_create(reg_list2, ignore_conflicts=True)		
       
         return Response({'data':records[:22]})
     
