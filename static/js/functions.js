@@ -249,7 +249,7 @@ $(document).ready(function ($) {
   });
 
   $("#inputScoreForm").on("submit", function (e) {
-    var table = $("#inputScoreTable").DataTable();
+    var table = $("#myProjectTable").DataTable();
     var form = this;
     var params = table.$("input").serializeArray();
 
