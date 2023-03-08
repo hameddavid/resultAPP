@@ -4,12 +4,10 @@ from .views import course_view, reg_view, hod_view
 
 
 urlpatterns = [
-
     #  path('api', SettingApiView.as_view()),
-     path('load-json', loadJson),
-     path('load-reg', loadRegistrationsJson),
-     path('load-correction', correct_prog_dpt_diff),
-
+    path('load-json', loadJson),
+    path('load-reg', loadRegistrationsJson),
+    path('load-correction', correct_prog_dpt_diff),
     path('mycourse', course_view.my_courses, name='mycourse'),
     path('add_courses', course_view.addCourses, name='add_courses'),
     path('approved_coures', course_view.approvedCourses, name='approved_courses'),

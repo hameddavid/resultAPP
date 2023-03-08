@@ -16,8 +16,9 @@ from base.baseHelper import session_semester_config, session_semester_config_alw
 def get_student_reg(request):
    
     if 'course_code' in request.POST and request.POST['course_code']:
+        settings = session_semester_config()
         regs = Registration.objects.filter( Q(course_code=request.POST.get('course_code')) &
-         Q(semester=session_semester_config().semester_code) & Q(session_id=session_semester_config().session))
+         Q(semester=settings.semester_code) & Q(session_id=settings.session))
         context = {'regs':regs, 'count':regs.count(), 'course':request.POST.get('course_code')}
         return render(request, 'course/studReg.html', context)
     else :

@@ -22,19 +22,19 @@ from datetime import datetime
 @login_required(login_url='index')
 @api_view(['POST'])
 def approve_disapprove_user_courses_in_semester(request):
-    # ug/api/approve-disapprove-user-courses-in-semester
+    # # ug/api/approve-disapprove-user-courses-in-semester
     try:
         if 'email' in request.POST and request.POST['email'] and len(request.POST.getlist('courses[]'))>0:
             if request.data['type'].upper() == 'APPROVE':
                 with transaction.atomic():
-                    course_list = LecturerCourse.objects.select_for_update().filter(lecturer=request.data['email'],settings=session_semester_config().id)
+                    course_list = LecturerCourse.objects.select_for_update().filter(lecturer=request.data['email'],id__in=request.POST.getlist('courses[]'),settings=session_semester_config().id)
                     for course in course_list:
                         course.status = 'APPROVED'
                         course.save()
                     return Response({'status':'success','message':'Course(s) approved!','data':''}, status=status.HTTP_200_OK)
             elif request.data['type'].upper() == 'DISAPPROVE':
                 with transaction.atomic():
-                    course_list = LecturerCourse.objects.select_for_update().filter(lecturer=request.data['email'],settings=session_semester_config().id)
+                    course_list = LecturerCourse.objects.select_for_update().filter(lecturer=request.data['email'],id__in=request.POST.getlist('courses[]'),settings=session_semester_config().id)
                     for course in course_list:
                         course.status = 'PENDING'
                         course.save()
@@ -52,7 +52,9 @@ def approve_disapprove_user_courses_in_semester(request):
 def get_user_courses_in_semester_for_approval(request):
     # ug/api/get-user-courses-in-semester-for-approval
     if 'email' in request.POST.keys() and request.POST['email']:
-        courses = [{'id':row.id,'course_code':row.course_code,'lecturer':row.lecturer.email} for row in LecturerCourse.objects.filter(lecturer=request.POST['email'],settings=session_semester_config().id)]
+        courses = [{'id':row.id,'course_code':row.course_code,'lecturer':row.lecturer.email}
+         for row in LecturerCourse.objects.filter(lecturer=request.POST['email'],
+        settings=session_semester_config().id)]
         return Response({'status':'success','message':'Courses gotten successfully!','data':courses}, status=status.HTTP_200_OK)
 
     return Response({'status':'failed','message':'Error fetching courses','data':''}, status=status.HTTP_400_BAD_REQUEST)
