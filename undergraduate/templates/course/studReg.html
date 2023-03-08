@@ -24,7 +24,7 @@
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <form method="post" id="inputScoreForm">
-                                        <table id="inputScoreTable" class="table table-hover align-middle mb-0 scoreTable" style="width:100%">
+                                        <table id="myProjectTable" class="table table-hover align-middle mb-0 scoreTable" style="width:100%">
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
@@ -87,5 +87,9 @@
     <!-- Jquery Page Js -->
     <script src="{% static 'js/template.js' %}"></script>
     <script src="{% static 'js/index.js' %}"></script>
+    
+    <!-- <script>
+        $("#inputScoreTable").DataTable();
+    </script> -->
 
 {% endblock content %}
