@@ -315,11 +315,11 @@ $(document).ready(function ($) {
       success: function (response) {
         console.log(response);
         $("#btnMassUpload").html("Upload");
-        alert(response.success);
+        alert(response.message);
       },
       error: function (response) {
         console.log(response);
-        alert(response.responseJSON.error);
+        alert(response.responseJSON.message);
         $("#btnMassUpload").html("Upload");
       },
     });
