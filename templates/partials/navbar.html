@@ -6,12 +6,11 @@
             <!-- header rightbar icon -->
             <div class="h-right d-flex align-items-center mr-5 mr-lg-0 order-1">
                 <div class="d-flex">
-                    <a class="nav-link text-primary collapsed" href="#" title="Get Help">
-                        <i class="icofont-info-square fs-5"></i>
-                    </a>
+                    {% if user.user_roles_lec %}
                     <div class="avatar-list avatar-list-stacked px-3">
                         <span class="avatar rounded-circle text-center pointer" data-bs-toggle="modal" data-bs-target="#addCourse"><i class="icofont-ui-add"></i></span>
                     </div>
+                    {% endif %}
                 </div>
                 <div class="dropdown notifications zindex-popover">
                     <a class="nav-link dropdown-toggle pulse" href="#" role="button" data-bs-toggle="dropdown">

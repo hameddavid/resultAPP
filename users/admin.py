@@ -85,7 +85,7 @@ class MyUserAdmin(UserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email','programme','department','semester_session_id', 'role', 'is_admin','is_active','created')
+    list_display = ('email','programme','department','semester_session_id', 'role', 'otp', 'is_admin','is_active','created')
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
@@ -123,5 +123,6 @@ class MyUserAdmin(UserAdmin):
 
 @admin.register(LogUserRoleForSemester)
 class LogUserRoleForSemesterAdmin(admin.ModelAdmin):
-    pass
+    
+    list_display = ('id','programme','owner')
 
