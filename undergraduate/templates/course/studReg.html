@@ -16,6 +16,7 @@
                         <div class="border-0 mb-4">
                             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                                 <h3 class="fw-bold mb-0">{{course}} Student Registration ({{count}})</h3>
+                                <button data-bs-toggle="modal" data-bs-target="#massUpload" class="btn btn-primary"><i class="icofont-upload-alt"></i> Mass Upload </button>
                             </div>
                         </div>
                     </div> <!-- Row end  -->
@@ -80,6 +81,26 @@
         </div>
     </div>
 
+    <div class="modal fade" id="massUpload" tabindex="-1" aria-labelledby="massUploadLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title  fw-bold" id="massUploadLabel">Result Mass Upload</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <form id="massUploadForm" method="POST">
+                            <input type="file" class="form-control form-control-md" accept=".xlsx, .xls, .csv" name="course_file" required>
+                            <hr>
+                            <button id="btnMassUpload" class="btn btn-primary" type="submit">Upload</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="{% static 'js/apexcharts.bundle.js' %}"></script>
     <script src="{% static 'js/dataTables.bundle.js' %}"></script>
 
@@ -87,7 +108,7 @@
     <!-- Jquery Page Js -->
     <script src="{% static 'js/template.js' %}"></script>
     <script src="{% static 'js/index.js' %}"></script>
-    
+
     <!-- <script>
         $("#inputScoreTable").DataTable();
     </script> -->

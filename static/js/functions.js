@@ -159,10 +159,12 @@ $(document).ready(function ($) {
         success: function (response) {
           console.log(response);
           alert(response.message);
+          $("#btnScoreInput").html("Submit");
+          $("#btnScoreInput").prop("disabled", false);
         },
         error: function (response) {
           console.log(response);
-          $("#btnScoreInput").html("Login");
+          $("#btnScoreInput").html("Submit");
           $("#btnScoreInput").prop("disabled", false);
           alert(response.responseJSON.message);
         },
@@ -252,6 +254,7 @@ $(document).ready(function ($) {
     var table = $("#myProjectTable").DataTable();
     var form = this;
     var params = table.$("input").serializeArray();
+    e.preventDefault();
 
     $.each(params, function () {
       if (!$.contains(document, form[this.name])) {
@@ -263,8 +266,62 @@ $(document).ready(function ($) {
         );
       }
     });
-    $("#example-console-form").text($(form).serialize());
-    $('input[type="hidden"]', form).remove();
+    //$("#example-console-form").text($(form).serialize());
+    var mydata = $(form).serialize();
+    console.log(mydata);
+    //$('input[type="hidden"]', form).remove();
+    var type = "POST";
+    var ajaxurl = "/ug/api/submit-student-reg-score";
+    $.ajax({
+      type: type,
+      url: ajaxurl,
+      data: mydata,
+      dataType: "json",
+      beforeSend: function () {
+        $("#btnScoreInput").html('<i class="fa fa-spinner fa-spin"></i>');
+        $("#btnScoreInput").prop("disabled", true);
+      },
+      success: function (response) {
+        console.log(response);
+        alert(response.message);
+        $("#btnScoreInput").html("Submit");
+        $("#btnScoreInput").prop("disabled", false);
+      },
+      error: function (response) {
+        console.log(response);
+        $("#btnScoreInput").html("Submit");
+        $("#btnScoreInput").prop("disabled", false);
+        alert(response.responseJSON.message);
+      },
+    });
+  });
+
+  $("#massUploadForm").on("submit", function (e) {
     e.preventDefault();
+    const course = $("input[name=course_code]").val();
+    const formData = new FormData(this);
+    formData.append("course_code", course);
+    $.ajax({
+      type: "POST",
+      url: "/ug/api/mass-submit-student-reg-score",
+      data: formData,
+      dataType: "json",
+      contentType: false,
+      cache: false,
+      processData: false,
+      beforeSend: function () {
+        $("#btnMassUpload").html('<i class="fa fa-spinner fa-spin"></i>');
+      },
+      success: function (response) {
+        console.log(response);
+        $("#btnMassUpload").html("Upload");
+        alert(response.message);
+      },
+      error: function (response) {
+        console.log(response);
+        alert(response.responseJSON.message);
+        $("#btnMassUpload").html("Upload");
+      },
+    });
   });
 });
