@@ -43,12 +43,14 @@ def mass_submit_student_reg_score(request):
     if  csv_file.name.endswith('.csv'):
         reader = pd.read_csv(csv_file)
         settings = session_semester_config()
+        res_data = []
         with transaction.atomic():
             for  _, row in reader.iterrows():
-                print(row)
-                #  Registration.objects.filter(matric_number_fk=row[0],
-                # course_code= row[1],session_id=settings.session,semester=settings.semester_code).update(score=row[2])
-        return Response({'status':'success','message':'Records updated successfully!','data':''}, status=status.HTTP_200_OK)
+                updated = Registration.objects.filter(matric_number_fk=row[0],
+                course_code= request.POST['course_code'],session_id=settings.session,semester=settings.semester_code).update(score=row[1])
+                if updated !=1:
+                    res_data.append(row[0])
+        return Response({'status':'success','message':'Records updated successfully!','data':res_data}, status=status.HTTP_200_OK)
 
     return Response({'status':'failed','message':'Error updating rocord','data':''}, status=status.HTTP_400_BAD_REQUEST)
 
