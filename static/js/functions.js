@@ -298,7 +298,7 @@ $(document).ready(function ($) {
 
   $("#massUploadForm").on("submit", function (e) {
     e.preventDefault();
-    const course = $("input[name=mass_course_code]").val();
+    const course = $("input[name=course_code]").val();
     const formData = new FormData(this);
     formData.append("course_code", course);
     $.ajax({
