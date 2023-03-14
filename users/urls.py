@@ -8,6 +8,7 @@ urlpatterns = [
     path('login', views.userlogin, name='userlogin'),
     path('master-sheet', views.display_class_master_sheet_exam, name='master_sheet'),
     path('master-sheet-sum', views.display_class_master_sheet_summary_exam, name='master_sheet_sum'),
+    path('master-sheet-sum-2', views.display_class_master_sheet_summary_exam_direct_from_reg_table, name='master_sheet_sum_2'),
     path('user/view-lecturer-roles', views.view_lecturer_roles_in_dpt, name='view_lecturer_roles'),
     
     # path('is_staff', views.is_staff, name='is_staff'),

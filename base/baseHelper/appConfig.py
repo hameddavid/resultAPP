@@ -14,7 +14,7 @@ def session_semester_config_always():
 
 def session_semester_config():
     try:
-        active_semester = Setting.objects.filter(status = 'ACTIVE').first()
+        active_semester = Setting.objects.filter(status = 'ACTIVE',semester_open_close=True).first()
         return active_semester
     except:
         pass

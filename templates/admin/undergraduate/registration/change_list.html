@@ -1,0 +1,22 @@
+{% extends "admin/change_list.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid  custom-file">
+    <form  method="post" enctype="multipart/form-data" id="formLoadReg">
+        {% csrf_token %}
+        <input type="file" name="reg_json"  class="" id="" required>
+        <button type="submit" id="btnLoadReg" class="btn btn-primary"> Upload registration </button>
+    </form>
+</div>
+
+{{ block.super }}
+
+<script src="{% static 'js/libscripts.bundle.js' %}"></script>
+<script src="{% static 'js/blockUI.js' %}"></script>
+<script src="{% static 'js/index.js' %}"></script>
+<script src="{% static 'js/admin_functions.js' %}"></script>
+
+{% endblock content %}
