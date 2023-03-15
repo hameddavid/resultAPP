@@ -305,7 +305,7 @@ def loadJson_reg(request):
     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/14_03_2023/registration.json") as f:
         records = json.load(f)
 
-    for record in records:   
+    for record in records: 
 
         fac = Registration( 
            matric_number_fk = Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
@@ -323,8 +323,7 @@ def loadJson_reg(request):
            deleted = record['deleted'] if 'deleted' in record.keys() else None,
            unit_id = record['unit_id'] if 'unit_id' in record.keys() else None,
            app_user_id = record['app_user_id'] if 'app_user_id' in record.keys() else None, 
-
-            last_updated_by_new=request.user,
+           last_updated_by_new=request.user,
          
             )
         fac.save()
@@ -388,6 +387,34 @@ def loadJson_courses(request):
         # return Response({'data':record})
     
     return Response({'data':records[0:4]})
+
+
+@login_required(login_url='index')
+@api_view(['GET', 'POST'])
+def loadJson_cur(request):    
+       with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/14_03_2023/curriculum.json") as f:
+        records = json.load(f)
+
+        for record in records:   
+
+            fac = Curriculum( 
+            programme_id = record['prog_code'],
+            course_code = record['course_code'],
+            status = record['status'],
+            last_updated_by_old = record['last_updated_by'],
+            last_updated_date_old = record['last_update_date'],
+            course_reg_level = record['course_level'],
+            semester = record['semester'],
+            register_flag = record['register_flag'],
+            last_updated_by_new=request.user,
+            
+                )
+            fac.save()
+        # return Response({'data':record})
+    
+        return Response({'data':records[0:4]})
+
+
 
 
 

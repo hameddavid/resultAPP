@@ -1,6 +1,6 @@
 from django.urls import  path, include
 from .ug_api.ug_api_views import (SettingApiView,loadJson,
-                    loadRegistrationsJson,correct_prog_dpt_diff,loadJson_reg,loadJson_courses)
+                    loadRegistrationsJson,correct_prog_dpt_diff,loadJson_reg,loadJson_courses,loadJson_cur)
 from .views import course_view, reg_view, hod_view
 
 
@@ -9,6 +9,7 @@ urlpatterns = [
     path('load-json', loadJson),
     path('load-json-reg', loadJson_reg),
     path('load-json-courses', loadJson_courses),
+    path('load-json-cur', loadJson_cur),
     path('load-reg', loadRegistrationsJson),
     path('load-correction', correct_prog_dpt_diff),
     path('mycourse', course_view.my_courses, name='mycourse'),

@@ -105,13 +105,24 @@ WSGI_APPLICATION = 'RunResult.wsgi.application'
 
 
 
+# DATABASES = {
+#     'default': {
+#          'ENGINE': 'django.db.backends.postgresql',
+#          'NAME': 'regpro1',
+#          'USER': 'runresult',
+#          'PASSWORD': 'result@@run',
+#          'HOST': '10.10.10.13',
+#          'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
     'default': {
          'ENGINE': 'django.db.backends.postgresql',
-         'NAME': 'regpro1',
+         'NAME': 'work_2',
          'USER': 'runresult',
          'PASSWORD': 'result@@run',
-         'HOST': '10.10.10.13',
+         'HOST': 'localhost',
          'PORT': '5432',
     }
 }
