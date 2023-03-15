@@ -1,0 +1,68 @@
+{% extends 'layouts/master.html' %}
+{% load static %}
+{% block title %} :: RUN Result - Print Results :: {% endblock title %}
+
+
+
+{% block content %}
+
+    <div id="mytask-layout" class="theme-indigo">
+        {% include 'partials/sidebar.html' %}
+        <div class="main px-lg-4 px-md-4">
+            {% include 'partials/navbar.html' %}
+            <div class="body d-flex py-lg-3 py-md-2">
+                <div class="container-xxl">
+                    <div class="row align-items-center">
+                        <div class="border-0 mb-4">
+                            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                                <h3 class="fw-bold mb-0">Print Results</h3>
+                            </div>
+                        </div>
+                    </div> <!-- Row end  -->
+                    <div class="row clearfix g-3">
+                      <div class="col-sm-12">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="row g-3 mb-3 row-deck">
+                                        <div class="col-md-12 col-lg-6 col-xl-6 col-xxl-6">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-12 col-md-7 col-lg-6 order-md-1 px-4">
+                                                            <h3 class="fw-bold ">Get Summary / Broadsheet</h3>
+                                                            <select class="form-control form-control-md" name="session" id="session">
+                                                                <option value="">Select the result type to print</option>
+                                                                <option value="summary">Print Summary</option>
+                                                                <option value="broadsheet">Print Broadsheet</option>
+                                                            </select>
+                                                            <select class="form-control form-control-md" name="session" id="session">
+                                                                <option value="">Select Session</option>
+                                                            </select>
+                                                            <select class="form-control form-control-md" name="semester" id="semester">
+                                                                <option value="">Select Semester</option>
+                                                            </select>
+                                                            <button class="btn bg-secondary text-light btn-lg lift">Submit</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-6 col-xl-6 col-xxl-6">
+                                            <div class="alert alert-primary p-3 mb-0 w-100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jquery Page Js -->
+    <script src="{% static 'js/template.js' %}"></script>
+    <script src="{% static 'js/index.js' %}"></script>
+
+{% endblock content %}

@@ -30,26 +30,26 @@
             {% endif %}
             {% if user.user_roles_hod %}
              <!-- Menu: manage lecturers in department by HOD -->
-          <li class="collapsed">
-            <a class="m-link" data-bs-toggle="collapse" data-bs-target="#manage-lecturers" href="#">
+            <li class="collapsed">
+                <a class="m-link" data-bs-toggle="collapse" data-bs-target="#manage-lecturers" href="#">
                 <i class="icofont-ui-user-group fs-5"></i> <span>Manage Lecturers</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
-            <ul class="sub-menu collapse" id="manage-lecturers">
-                <li><a class="ms-link" href="{% url 'view_lecturer_roles' %}"> <span>Lecturers</span></a></li>
-                <li><a class="ms-link" href="{% url 'view_lecturer_courses_in_semester' %}"> <span>Lecturers & Courses</span></a></li>
-            </ul>
-        </li>
-        {% endif %}
+                <ul class="sub-menu collapse" id="manage-lecturers">
+                    <li><a class="ms-link" href="{% url 'view_lecturer_roles' %}"> <span>Lecturers</span></a></li>
+                    <li><a class="ms-link" href="{% url 'view_lecturer_courses_in_semester' %}"> <span>Lecturers & Courses</span></a></li>
+                </ul>
+            </li>
+            {% endif %}
             {% if user.user_roles_eo %}
              <!-- Menu: manage lecturers in department by HOD -->
-          <li class="collapsed">
-            <a class="m-link" data-bs-toggle="collapse" data-bs-target="#manage-results" href="#">
+            <li class="collapsed">
+                <a class="m-link" data-bs-toggle="collapse" data-bs-target="#manage-results" href="#">
                 <i class="icofont-law-document fs-5"></i> <span>Manage Results</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
-            <ul class="sub-menu collapse" id="manage-results">
-                <li><a class="ms-link" href="{% url 'view_lecturer_roles' %}"> <span>Get Summary</span></a></li>
-                <li><a class="ms-link" href="{% url 'approved_courses' %}"> <span>Get Broadsheet</span></a></li>
-            </ul>
-        </li>
-        {% endif %}
+                <ul class="sub-menu collapse" id="manage-results">
+                    <li><a class="ms-link" href="{% url 'view_lecturer_roles' %}"> <span>Get Summary</span></a></li>
+                    <li><a class="ms-link" href="{% url 'approved_courses' %}"> <span>Get Broadsheet</span></a></li>
+                </ul>
+            </li>
+            {% endif %}
         </ul>
 
          
