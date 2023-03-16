@@ -45,8 +45,7 @@
                 <a class="m-link" data-bs-toggle="collapse" data-bs-target="#manage-results" href="#">
                 <i class="icofont-law-document fs-5"></i> <span>Manage Results</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
                 <ul class="sub-menu collapse" id="manage-results">
-                    <li><a class="ms-link" href="{% url 'view_lecturer_roles' %}"> <span>Get Summary</span></a></li>
-                    <li><a class="ms-link" href="{% url 'approved_courses' %}"> <span>Get Broadsheet</span></a></li>
+                    <li><a class="ms-link" href="{% url 'get_print_result_view' %}"> <span>Print Results</span></a></li>
                 </ul>
             </li>
             {% endif %}

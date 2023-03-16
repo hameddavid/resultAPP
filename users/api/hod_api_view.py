@@ -9,7 +9,7 @@ from django.db.models import Prefetch
 
 
 from users.models import User,LogUserRoleForSemester
-from undergraduate.models import Programme, Department,Student,Registration
+from undergraduate.models import Programme, Department,Faculty,Student,Registration
 from .serializers import (UserSerializer,UserRolesLoggerSerializer,
 UserRolesLoggerSerializerHOD)
 from base.baseHelper import session_semester_config, session_semester_config_always
@@ -34,8 +34,10 @@ def approve_disapprove_user_roles_in_semester(request):
                 roles_log.approved_by = request.user
                 roles_log.save()
                 user.role.update(roles_log.roles) 
-                user.programme = roles_log.programme
-                user.department = roles_log.department
+                user.programme = Programme.objects.filter( programme_id=roles_log.programme_id).first()
+                department = Department.objects.filter( id=roles_log.id).first() 
+                user.department = department
+                user.faculty = Faculty.objects.filter( id=department.faculty_id).first() 
                 user.save()
                 return Response({'status':'success','message':'User roles successfully approved'}, status=status.HTTP_200_OK)
 

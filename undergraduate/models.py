@@ -37,7 +37,7 @@ class Department(models.Model):
         db_table = "ug_departments"
 
     def __str__(self) -> str:
-        return self.department
+        return self.id
         
     def save(self, *args, **kwargs):
         self.department.upper()
@@ -59,7 +59,7 @@ class Programme(models.Model):
         db_table = "ug_programmes"
 
     def __str__(self) -> str:
-        return self.programme
+        return self.programme_id
     
     def save(self, *args, **kwargs):
         self.programme.upper()
