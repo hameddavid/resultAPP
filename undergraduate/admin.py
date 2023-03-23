@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
+from django.urls import path
 from .models import (Programme,Faculty,Department,Course,Curriculum,Student,
                     ErrorLog,History1,Lecturer,OutstandException,RegSummary,Registration,
                     RunregTransHistory,Session,)
@@ -46,8 +49,8 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 @admin.register(Programme)
 class ProgrammeAdmin(admin.ModelAdmin):
-    fields = ['programme_id','programme','department','required_cteup','required_ctcup','deleted']
-    list_display = ['programme_id','programme','department','required_cteup','required_ctcup','deleted','created']
+    fields = ['programme_code','programme','department','required_cteup','required_ctcup','deleted']
+    list_display = ['programme_code','programme','department','required_cteup','required_ctcup','deleted','created']
     list_editable = ['programme','department']
 
     def save_model(self, request, obj, form, change):
@@ -88,6 +91,7 @@ admin.site.register(Lecturer)
 admin.site.register(OutstandException)
 admin.site.register(RegSummary)
 
+
 @admin.register(Registration)
 class RegistrationAdmin(admin.ModelAdmin):
     fields = ['matric_number_fk','course_code','status','semester']
@@ -97,6 +101,18 @@ class RegistrationAdmin(admin.ModelAdmin):
     search_fields = ('matric_number_fk','course_code',)
     ordering = ('session_id','matric_number_fk',)
     list_per_page = 100
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('admin-reg-activities', self.admin_site.admin_view(self.my_view))
+        ]
+        return my_urls + urls
+    
+    def my_view(self, request):
+        my_url = reverse('admin:admin_reg_activities')
+        return format_html(f'<a href="{my_url}">Registration Activities</a>')
+
 
 admin.site.register(RunregTransHistory)
 admin.site.register(Session)

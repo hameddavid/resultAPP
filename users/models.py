@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     role = models.JSONField(default= dict,blank=True,null=True) 
     semester_session_id = models.ForeignKey('base.Setting',blank=False,null=False, on_delete=models.RESTRICT)
-    programme = models.ForeignKey('undergraduate.Programme', related_name='programme_user_related', on_delete=models.RESTRICT,to_field='programme_id',blank=True,null=True)
+    programme = models.ForeignKey('undergraduate.Programme', related_name='programme_user_related', on_delete=models.RESTRICT,to_field='programme_code',blank=True,null=True)
     department = models.ForeignKey('undergraduate.Department', related_name='department_user_related', on_delete=models.RESTRICT,to_field='id',blank=True,null=True)
     faculty = models.ForeignKey('undergraduate.Faculty', related_name='faculty_user_related', on_delete=models.RESTRICT,to_field='id',blank=True,null=True)
     is_active = models.BooleanField(default=False)
@@ -64,7 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         db_table = "users"
 
     def __str__(self):
-        return self.email
+        return self.email  
     
     
     # def has_perm(self, perm, obj=None):
@@ -120,7 +120,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class LevelAdviser(models.Model):
     lecturer = models.ForeignKey('users.User', on_delete=models.RESTRICT)
-    programme = models.ForeignKey('base.Programme', on_delete=models.RESTRICT)
+    programme = models.ForeignKey('undergraduate.Programme', on_delete=models.RESTRICT, to_field='programme_code', blank=True, null=True)
     level = models.CharField(max_length=10)
     # last_updated_by = models.ForeignKey('users.User', on_delete=models.RESTRICT)
     settings = models.ForeignKey('base.Setting', on_delete=models.RESTRICT)
@@ -149,7 +149,7 @@ class LogUserRoleForSemester(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner_semester_role_related',to_field='email')
     roles = models.JSONField()
     semester_session = models.ForeignKey('base.Setting', on_delete=models.RESTRICT)
-    programme = models.ForeignKey('undergraduate.Programme', related_name='programme_semester_role_related', on_delete=models.RESTRICT,to_field='programme_id')
+    programme = models.ForeignKey('undergraduate.Programme', related_name='programme_semester_role_related', on_delete=models.RESTRICT,to_field='programme_code')
     department = models.ForeignKey('undergraduate.Department', related_name='department_semester_role_related', on_delete=models.RESTRICT,to_field='id')
     approved_by = models.ForeignKey('users.User',to_field='email', related_name='approved_by_semester_role_related',on_delete=models.RESTRICT,null=True, blank=True)
     approved_at = models.DateTimeField(auto_now_add=True)

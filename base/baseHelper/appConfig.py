@@ -18,3 +18,18 @@ def session_semester_config():
         return active_semester
     except:
         pass
+
+
+
+
+import requests
+
+def check_network():
+    try:
+        response = requests.get('https://www.google.com')
+        if response.status_code == 200:
+            return True
+        else:
+            return False
+    except requests.exceptions.RequestException:
+        return False

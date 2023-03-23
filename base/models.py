@@ -5,7 +5,7 @@ from users.models import User
 
 
 class Staff(models.Model):
-    user = models.OneToOneField(User,related_name='staff' ,on_delete=models.CASCADE,unique=True, blank=True, null=True)
+    user = models.OneToOneField(User,related_name='staff' ,on_delete=models.CASCADE,unique=True, blank=True, null=True,to_field='email')
     userid = models.CharField(max_length=255,null=True, blank=True, unique=True)
     email = models.CharField(max_length=255,null=True, blank=True, unique=True)
     phone = models.CharField(max_length=11,null=True, blank=True)

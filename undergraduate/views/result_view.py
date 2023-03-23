@@ -53,8 +53,8 @@ def get_print_result_view(request):
 #     # params = {'session_id':'2022/2023','semester':'2', 'prog':'CMP', 'level':'300'}
 #     params = {'session_id':'2021/2022','semester':'1', 'prog':'ECO', 'level':'300'}
     
-#     session_list = [request.POST['session']]
-#     val1 = request.POST['session'].split('/')
+#     session_list = [request.POST.get('session')]
+#     val1 = request.POST.get('session').split('/')
 #     current_session = session_semester_config().session.split('/')
 #     prev_level = int(current_session[1]) - int(val1[1])
 #     prev_session = f'{str(int(val1[0])-1)}/{str(int(val1[1])-1)}'
@@ -67,7 +67,7 @@ def get_print_result_view(request):
 #     current_level=params['level'],status='CURRENT').order_by('matric_number') 
 #     if [True for val in row.ug_reg_sum_related.all() if val.session_id in session_list ]]
 
-#     courses_from_reg = Registration.objects.filter(session_id__lte=request.POST['session'], status = 'C',
+#     courses_from_reg = Registration.objects.filter(session_id__lte=request.POST.get('session'), status = 'C',
 #     matric_number_fk__in=[mats['matric_number'] for mats in stud_reg_sum]).values('matric_number_fk',
 #     'course_code','score','status','grade')
   
@@ -75,59 +75,65 @@ def get_print_result_view(request):
     
 #     return render(request, 'user/master_sheet_summary.html', context={'data':get_summary_table(stud_reg_sum,courses_from_reg,courses_from_curr,current_session,request)})
 
+def format_level_supplied(param):
+    new_level = param
+    if param.endswith('+') or param.endswith('F'):
+        new_level = param[:-1]
+    return int(new_level)
 
 def validate_request_parama(request):
-     # <QueryDict: {'csrfmiddlewaretoken': ['u29Nz5txhyu8gvDdmjTU2Buwifp7cWpHHH9cZUTgGdqpal2Qchvx4anzYBbcDQaJ'], 
-    # 'to_print': ['summary'], 'group': ['current'], 
-    # 'level': ['200'], 'session': ['2008/2009'], 'semester': ['1']}>
+    # if request.POST['summary'] and request.POST['group'] and request.POST['level'] and request.POST['session'] and request.POST['semester']:
+    if request.method == 'GET':
+        return False
     return True
 
 
 def get_broadsheet_or_summary_for_print(request):
-
+ 
     if validate_request_parama(request):
-        get_programme = request.user.programme
-        session_list = [request.POST['session']]
+        get_programme = request.user.programme.programme_code
+        session_list = [request.POST.get('session')]
         val1 = request.POST['session'].split('/')
         current_session = session_semester_config().session.split('/')
-        prev_level = str(int(current_session[1]) - int(val1[1]))+'00'
+        prev_level = abs(int(str(int(current_session[1]) - int(val1[1]))+'00') - int(format_level_supplied(request.POST.get('level'))))
         prev_session = f'{str(int(val1[0])-1)}/{str(int(val1[1])-1)}'
         
         if request.POST['to_print'].upper() == 'SUMMARY':
             cur_result = [{'matric_number':row.matric_number,
             'surname':row.surname, 'firstname':row.firstname,'sub':row.ug_reg_stud_related.all()} 
                 for row in Student.objects.prefetch_related(Prefetch('ug_reg_stud_related'
-            ,queryset=Registration.objects.filter(session_id=request.POST['session'], deleted='N'))
+            ,queryset=Registration.objects.filter(session_id=request.POST.get('session'), deleted='N'))
             ).filter(prog_code=get_programme,
-            current_level=request.POST['level'],status=request.POST['group']).order_by('matric_number')
+            current_level=request.POST.get('level'),status=request.POST.get('group').upper()).order_by('matric_number')
             if row.ug_reg_stud_related.all().count()>0]
-
+           
             cur_prev_result = [{'matric_number':row.matric_number,
             'surname':row.surname, 'firstname':row.firstname,'sub':row.ug_reg_stud_related.all()} 
                 for row in Student.objects.prefetch_related(Prefetch('ug_reg_stud_related'
-            ,queryset=Registration.objects.filter(session_id__lte=request.POST['session'], deleted='N'))
+            ,queryset=Registration.objects.filter(session_id__lte=request.POST.get('session'), deleted='N'))
             ).filter(prog_code=get_programme,
-            current_level=request.POST['level'],status=request.POST['group'],
+            current_level=request.POST.get('level'),status=request.POST.get('group').upper(),
             matric_number__in=[mats['matric_number'] for mats in cur_result]).order_by('matric_number')
             if row.ug_reg_stud_related.all().count()>0]
     
-            courses_from_reg = Registration.objects.filter(session_id__lte=request.POST['session'], status = 'C',
+            courses_from_reg = Registration.objects.filter(session_id__lte=request.POST.get('session'), status = 'C',
             matric_number_fk__in=[mats['matric_number'] for mats in cur_result]).values('matric_number_fk',
             'course_code','score','status','grade')
         
             courses_from_curr = Curriculum.objects.filter(programme=get_programme,status ='C', course_reg_level__lte= prev_level).values('course_code')
+            list_all_course_code_and_equivalence = [{'course_code':course_row['course_code'],'eqv':course_row['course_id_of_equivalence']} for course_row in Course.objects.all().exclude(course_id_of_equivalence=0).values('course_code','course_id_of_equivalence')]
             
-            return render(request, 'user/master_sheet_summary.html', context={'data':get_summary_table_2(cur_prev_result,courses_from_reg,courses_from_curr,prev_level,request)})
+            return render(request, 'user/master_sheet_summary.html', context={'data':get_summary_table_2(cur_prev_result,courses_from_reg,courses_from_curr,prev_level,list_all_course_code_and_equivalence,request)})
         
         elif request.POST['to_print'].upper() == 'BROADSHEET':
                stud_reg = [{'matric_number':row.matric_number,
                 'surname':row.surname, 'firstname':row.firstname,'sub':row.ug_reg_stud_related.all()} 
                     for row in Student.objects.prefetch_related(Prefetch('ug_reg_stud_related'
-                ,queryset=Registration.objects.filter(session_id=request.POST['session'], semester=request.POST['semester'])
-                )).filter(prog_code=get_programme,current_level=request.POST['level'],status=request.POST['group']).order_by('matric_number')
+                ,queryset=Registration.objects.filter(session_id=request.POST.get('session'), semester=request.POST.get('semester'))
+                )).filter(prog_code=get_programme,current_level=request.POST.get('level'),status=request.POST.get('group').upper()).order_by('matric_number')
                 if row.ug_reg_stud_related.all().count()>0]
                 
-               unique_courses = Registration.objects.filter(session_id=request.POST['session'], semester=request.POST['semester'],
+               unique_courses = Registration.objects.filter(session_id=request.POST.get('session'), semester=request.POST.get('semester'),
                 matric_number_fk__in=[mats['matric_number'] for mats in stud_reg]).values('course_code',
                 'unit','status','unit_id').distinct('course_code')
                course_desc = Course.objects.filter(course_code__in=[el['course_code'] for el in unique_courses]).order_by('course_code').distinct('course_code')
@@ -146,8 +152,8 @@ def get_broadsheet_or_summary_for_print(request):
 # def display_class_master_sheet_summary_exam_direct_from_reg_table(request):
 #     # params = {'session_id':'2022/2023','semester':'2', 'prog':'CMP', 'level':'300'}
 #     params = {'session_id':'2021/2022','semester':'1', 'prog':'CMP', 'level':'400'}
-#     session_list = [request.POST['session']]
-#     val1 = request.POST['session'].split('/')
+#     session_list = [request.POST.get('session')]
+#     val1 = request.POST.get('session').split('/')
 #     current_session = session_semester_config().session.split('/')
 #     prev_level = int(current_session[1]) - int(val1[1])
 #     prev_session = f'{str(int(val1[0])-1)}/{str(int(val1[1])-1)}'
@@ -156,14 +162,14 @@ def get_broadsheet_or_summary_for_print(request):
 #     cur_result = [{'matric_number':row.matric_number,
 #     'surname':row.surname, 'firstname':row.firstname,'sub':row.ug_reg_stud_related.all()} 
 #         for row in Student.objects.prefetch_related(Prefetch('ug_reg_stud_related'
-#     ,queryset=Registration.objects.filter(session_id=request.POST['session'], deleted='N'))).filter(prog_code=params['prog'],
+#     ,queryset=Registration.objects.filter(session_id=request.POST.get('session'), deleted='N'))).filter(prog_code=params['prog'],
 #     current_level=params['level'],status='CURRENT').order_by('matric_number')
 #     if row.ug_reg_stud_related.all().count()>0]
 
 #     cur_prev_result = [{'matric_number':row.matric_number,
 #     'surname':row.surname, 'firstname':row.firstname,'sub':row.ug_reg_stud_related.all()} 
 #         for row in Student.objects.prefetch_related(Prefetch('ug_reg_stud_related'
-#     ,queryset=Registration.objects.filter(session_id__lte=request.POST['session'], deleted='N'))).filter(prog_code=params['prog'],
+#     ,queryset=Registration.objects.filter(session_id__lte=request.POST.get('session'), deleted='N'))).filter(prog_code=params['prog'],
 #     current_level=params['level'],status='CURRENT',
 #     matric_number__in=[mats['matric_number'] for mats in cur_result]).order_by('matric_number')
 #     if row.ug_reg_stud_related.all().count()>0]
@@ -181,34 +187,34 @@ def get_broadsheet_or_summary_for_print(request):
 
 
 
-def prepare_get_values_for_summary_sheet_2(subjects,courses_from_reg, courses_from_curr,request,stud):
+def prepare_get_values_for_summary_sheet_2(subjects,courses_from_reg, courses_from_curr,list_all_course_code_and_equivalence,request,stud):
     t_str = ''
-    t_str +="""<td>"""+ str(get_prev_ctnur(subjects, session=request.POST['session'])) + """</td> """
-    t_str +="""<td>"""+ str(get_prev_ctnup(subjects, session=request.POST['session'])) + """</td> """
-    t_str +="""<td>"""+ str(get_prev_ctcp(subjects, session=request.POST['session'])) + """</td> """
-    t_str +="""<td>"""+ str(get_prev_cgpa(get_prev_ctnur(subjects, session=request.POST['session']), get_prev_ctcp(subjects, session=request.POST['session']))) + """</td> """
+    t_str +="""<td>"""+ str(get_prev_ctnur(subjects, session=request.POST.get('session'))) + """</td> """
+    t_str +="""<td>"""+ str(get_prev_ctnup(subjects, session=request.POST.get('session'))) + """</td> """
+    t_str +="""<td>"""+ str(get_prev_ctcp(subjects, session=request.POST.get('session'))) + """</td> """
+    t_str +="""<td>"""+ str(get_prev_cgpa(get_prev_ctnur(subjects, session=request.POST.get('session')), get_prev_ctcp(subjects, session=request.POST.get('session')))) + """</td> """
     
-    t_str +="""<td>"""+ str(get_cur_ctnur(subjects, session=request.POST['session'],semester=request.POST['semester'])) + """</td> """
-    t_str +="""<td>"""+ str(get_cur_ctnup(subjects, session=request.POST['session'],semester=request.POST['semester'])) + """</td> """
-    t_str +="""<td>"""+ str(get_cur_ctcp(subjects, session=request.POST['session'],semester=request.POST['semester'])) + """</td> """
-    t_str +="""<td>"""+ str(get_cur_gpa( get_cur_ctnur(subjects, session=request.POST['session'],semester=request.POST['semester']), get_cur_ctcp(subjects, session=request.POST['session'],semester=request.POST['semester']) ) ) + """</td> """
-    t_str +="""<td>"""+str(get_stud_oustanding_2(stud, courses_from_reg, courses_from_curr, request)[0]) +"""</td>"""
+    t_str +="""<td>"""+ str(get_cur_ctnur(subjects, session=request.POST.get('session'),semester=request.POST.get('semester'))) + """</td> """
+    t_str +="""<td>"""+ str(get_cur_ctnup(subjects, session=request.POST.get('session'),semester=request.POST.get('semester'))) + """</td> """
+    t_str +="""<td>"""+ str(get_cur_ctcp(subjects, session=request.POST.get('session'),semester=request.POST.get('semester'))) + """</td> """
+    t_str +="""<td>"""+ str(get_cur_gpa( get_cur_ctnur(subjects, session=request.POST.get('session'),semester=request.POST.get('semester')), get_cur_ctcp(subjects, session=request.POST.get('session'),semester=request.POST.get('semester')) ) ) + """</td> """
+    t_str +="""<td>"""+str(get_stud_oustanding_2(stud, courses_from_reg, courses_from_curr,list_all_course_code_and_equivalence, request)[0]) +"""</td>"""
     
-    t_str +="""<td>"""+ str(format_for_str_issue(get_prev_ctnur(subjects, session=request.POST['session']), get_cur_ctnur(subjects, session=request.POST['session'],semester=request.POST['semester']))) + """</td> """
-    t_str +="""<td>"""+ str( format_for_str_issue(get_prev_ctnup(subjects, session=request.POST['session']) , get_cur_ctnup(subjects, session=request.POST['session'],semester=request.POST['semester']))) + """</td> """
-    t_str +="""<td>"""+ str( format_for_str_issue(get_prev_ctcp(subjects, session=request.POST['session']) , get_cur_ctcp(subjects, session=request.POST['session'],semester=request.POST['semester']))) + """</td> """
+    t_str +="""<td>"""+ str(format_for_str_issue(get_prev_ctnur(subjects, session=request.POST.get('session')), get_cur_ctnur(subjects, session=request.POST.get('session'),semester=request.POST.get('semester')))) + """</td> """
+    t_str +="""<td>"""+ str( format_for_str_issue(get_prev_ctnup(subjects, session=request.POST.get('session')) , get_cur_ctnup(subjects, session=request.POST.get('session'),semester=request.POST.get('semester')))) + """</td> """
+    t_str +="""<td>"""+ str( format_for_str_issue(get_prev_ctcp(subjects, session=request.POST.get('session')) , get_cur_ctcp(subjects, session=request.POST.get('session'),semester=request.POST.get('semester')))) + """</td> """
     t_str +="""<td>"""+ str(get_cgpa(
-        get_prev_ctnur(subjects, session=request.POST['session']),
-        get_prev_ctcp(subjects, session=request.POST['session']),
-        get_cur_ctnur(subjects, session=request.POST['session'],semester=request.POST['semester']),
-        get_cur_ctcp(subjects, session=request.POST['session'],semester=request.POST['semester'])
+        get_prev_ctnur(subjects, session=request.POST.get('session')),
+        get_prev_ctcp(subjects, session=request.POST.get('session')),
+        get_cur_ctnur(subjects, session=request.POST.get('session'),semester=request.POST.get('semester')),
+        get_cur_ctcp(subjects, session=request.POST.get('session'),semester=request.POST.get('semester'))
     )) + """</td> """
-    t_str +="""<td>"""+str(get_stud_oustanding_2(stud, courses_from_reg, courses_from_curr, request)[1]) +"""</td>"""
+    t_str +="""<td>"""+str(get_stud_oustanding_2(stud, courses_from_reg, courses_from_curr,list_all_course_code_and_equivalence, request)[1]) +"""</td>"""
     t_str +="""<td>"""+str(get_acad_status(get_cgpa(
-        get_prev_ctnur(subjects, session=request.POST['session']),
-        get_prev_ctcp(subjects, session=request.POST['session']),
-        get_cur_ctnur(subjects, session=request.POST['session'],semester=request.POST['semester']),
-        get_cur_ctcp(subjects, session=request.POST['session'],semester=request.POST['semester'])
+        get_prev_ctnur(subjects, session=request.POST.get('session')),
+        get_prev_ctcp(subjects, session=request.POST.get('session')),
+        get_cur_ctnur(subjects, session=request.POST.get('session'),semester=request.POST.get('semester')),
+        get_cur_ctcp(subjects, session=request.POST.get('session'),semester=request.POST.get('semester'))
     )))+"""</td>"""
     
     return t_str
@@ -348,11 +354,11 @@ def prepare_get_values_for_summary_sheet(summary_instance,courses_from_reg, cour
     # params = {'session_id':'2022/2023','semester':'2', 'prog':'CMP', 'level':'300'}
     t_str = ''
     prev = {}
-    curr = list(filter(lambda row:row.session_id == request.POST['session'] and row.semester == params['semester'], summary_instance))
+    curr = list(filter(lambda row:row.session_id == request.POST.get('session') and row.semester == params['semester'], summary_instance))
     if params['semester'] == '2':
-        prev = list(filter(lambda row:row.session_id == request.POST['session'] and row.semester == '1', summary_instance))
+        prev = list(filter(lambda row:row.session_id == request.POST.get('session') and row.semester == '1', summary_instance))
     elif params['semester'] == '1':
-        prev_session_list = request.POST['session'].split('/')
+        prev_session_list = request.POST.get('session').split('/')
         prev_session = str(int(prev_session_list[0])-1)+'/'+str(int(prev_session_list[1])-1)
         prev = list(filter(lambda row:row.session_id == prev_session and row.semester == '2', summary_instance))
   
@@ -428,20 +434,50 @@ def get_stud_oustanding(curr,courses_from_reg,courses_from_curr, request):
     return [len(list_reg_failed_courses + courses_in_curr_not_reg),courses]
 
 
-def get_stud_oustanding_2(stud,courses_from_reg,courses_from_curr, request):
-    list_reg_courses = [row['course_code'] for row in courses_from_reg if row['matric_number_fk'] == f"{stud['matric_number']}"]
-    list_reg_failed_courses = [row['course_code'] for row in courses_from_reg if row['matric_number_fk'] == f"{stud['matric_number']}" and row['grade']=='F']
+def get_stud_oustanding_2(stud,courses_from_reg,courses_from_curr,list_all_course_code_and_equivalence, request):
+    # 'matric_number_fk','course_code','score','status','grade'
+    # {'course_code':row['course_code'],'grade':row['grade']}
+    list_reg_courses = [row['course_code'] for row in courses_from_reg 
+                    if row['matric_number_fk'] == f"{stud['matric_number']}"]
+
+    list_reg_failed_courses = [row['course_code'] for row in courses_from_reg 
+                if row['matric_number_fk'] == f"{stud['matric_number']}" and row['grade']=='F']
+    
+    list_reg_pass_courses = [row['course_code'] for row in courses_from_reg 
+                if row['matric_number_fk'] == f"{stud['matric_number']}" and row['grade']!='F']
+
     list_curr_courses = [row['course_code'] for row in courses_from_curr]
+    # for rec in list_all_course_code_and_equivalence:
+    #     if rec['eqv'] == 0:
+    #         print(rec)
+
     courses_in_curr_not_reg = list((Counter(list_curr_courses) - Counter(list_reg_courses)).elements())
-    if len(list_reg_courses) > 0:
-          courses_in_curr_not_reg = [f'*{course}' for course in courses_in_curr_not_reg]
+
+    # if len(courses_in_curr_not_reg) > 0:
+          
+    #       courses_in_curr_not_reg = [f'*{course}' for course in courses_in_curr_not_reg]
     courses = ''
     combined = list_reg_failed_courses + courses_in_curr_not_reg
+    for course_code in combined:
+        filter1 = list(filter(lambda row:row['course_code'] == course_code, list_all_course_code_and_equivalence))
+        if len(filter1) >0: 
+             filter2 = list(filter(lambda row:row['eqv'] == filter1[0]['eqv'], list_all_course_code_and_equivalence))
+             list_eqv_course_code = [item['course_code'] for item in filter2]
+             for course in list_eqv_course_code:
+                if course in list_reg_pass_courses:
+                    for course_2 in list_eqv_course_code:
+                        if course_2 in combined:
+                            print(course_2,stud['matric_number'])
+                            combined.remove(course_2)
+             
     for index, course in enumerate(combined, start=1):
         courses += course
         if index != len(combined):
             courses += ' , '
-    return [len(list_reg_failed_courses + courses_in_curr_not_reg),courses]
+            if index == 4:
+                courses += ' ...'
+                break
+    return [len(combined),courses]
 
 
 def get_total_unit_reg_in_semester(query):
@@ -506,7 +542,7 @@ def get_page_header(request, prev_level):
     
     faculty = Faculty.objects.filter(id = request.user.faculty.id).first().faculty if Faculty.objects.filter(id = request.user.faculty.id).first().faculty else " "
     dept = Department.objects.filter(id = request.user.department.id).first().department if Department.objects.filter(id = request.user.department.id).first().department else " "
-    prog = Programme.objects.filter(programme_id = request.user.programme.programme_id).first().programme if Programme.objects.filter(programme_id = request.user.programme.programme_id).first().programme else " "
+    prog = Programme.objects.filter(programme_code = request.user.programme.programme_code).first().programme if Programme.objects.filter(programme_code = request.user.programme.programme_code).first().programme else " "
   
     return  """   <div class="page"> {% load static %}
             <div class="header">
@@ -590,7 +626,7 @@ def get_summary_table(stud_reg_sum,courses_from_reg,courses_from_curr,prev_level
     return t.render(c)
 
 
-def get_summary_table_2(cur_prev_result,courses_from_reg,courses_from_curr,prev_level,request):
+def get_summary_table_2(cur_prev_result,courses_from_reg,courses_from_curr,prev_level,list_all_course_code_and_equivalence,request):
     table_data = ''
     table_data += get_page_header(request,prev_level)
     head_tracker = 0
@@ -600,7 +636,7 @@ def get_summary_table_2(cur_prev_result,courses_from_reg,courses_from_curr,prev_
         if main_index == 1:
                 table_data +=  get_static_table_header_for_summary_sheet()
         firstName = stud['firstname'].split(' ') 
-        val_prepare_get_values_for_summary_sheet = prepare_get_values_for_summary_sheet_2(stud['sub'].all(),courses_from_reg,courses_from_curr,request,stud)
+        val_prepare_get_values_for_summary_sheet = prepare_get_values_for_summary_sheet_2(stud['sub'].all(),courses_from_reg,courses_from_curr,list_all_course_code_and_equivalence,request,stud)
         if val_prepare_get_values_for_summary_sheet == '':
             continue
         sn +=1

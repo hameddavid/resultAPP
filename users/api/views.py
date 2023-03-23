@@ -28,6 +28,7 @@ def user(request):
 @login_required(login_url='index')
 @api_view(['GET', 'POST','PUT','PATCH'])
 def check_user_role_for_semester(request):
+    # current_settings = session_semester_config()
     if request.method == 'GET':
         owner = LogUserRoleForSemester.objects.filter(owner=request.user, semester_session=session_semester_config()).first()
         if owner is None:
@@ -43,7 +44,7 @@ def check_user_role_for_semester(request):
     elif request.method == 'POST':
         if request.data['department']:
             dpt= Department.objects.filter(id=request.data['department']).first().id  
-            prog= Programme.objects.filter(department = dpt).first().programme_id
+            prog= Programme.objects.filter(department_id = dpt).first().id
         elif request.data['programme']:
              prog= request.data.get('programme').split('*')[0] 
              dpt= Department.objects.filter(id=request.data.get('programme').split('*')[1]).first().id   
@@ -52,14 +53,13 @@ def check_user_role_for_semester(request):
         "programme": prog,
         "department": dpt,
         "semester_session": session_semester_config().id or None,
-        "owner": request.user or None
+        "owner": request.user.email or None
          })
         if serializer.is_valid():
             serializer.save()
             # send email notification to the HOD
             return Response({'status':'success','message':'roles created!','data':''}, status=status.HTTP_200_OK)
         return Response(serializer.errors)
-        return Response()
     if request.method == 'PUT':
         obj = LogUserRoleForSemester.objects.filter(owner=request.user, semester_session=session_semester_config()).first()
         serializer = UserRolesLoggerSerializer(obj, data={  

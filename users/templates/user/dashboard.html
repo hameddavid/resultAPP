@@ -119,7 +119,7 @@
                                         <select class="form-control form-control-md" name="programme" id="programme">
                                             <option value="">Select Programme</option>
                                             {% for row in prog %}
-                                            <option value="{{row.programme_id}}*{{row.department.id}}">{{row.programme}}</option>
+                                            <option value="{{row.id}}*{{row.department.id}}">{{row.programme}}</option>
                                             {% endfor%}
                                         </select>
                                     </div>
