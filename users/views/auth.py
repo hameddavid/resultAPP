@@ -19,8 +19,9 @@ from undergraduate.models import Course, Curriculum,Student,Department,Programme
 from collections import Counter
 from rest_framework import status, generics
 
-
 from django.db import connection
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 
@@ -41,6 +42,8 @@ def unique_user_otp_generator(len):
 
 #
 def index(request):
+
+
     # table_name = "ug_programmes"
     # sequence_name = f"{table_name}_id_seq"
     # with connection.cursor() as cursor:

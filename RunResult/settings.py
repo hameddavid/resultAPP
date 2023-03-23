@@ -188,13 +188,29 @@ SESSION_TIMEOUT_REDIRECT = 'index'
 
 
 # Email config
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'ictdev@run.edu.ng'
+# EMAIL_HOST_PASSWORD = 'RunDev123'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.ionos.co.uk'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'ictdev@run.edu.ng'
-EMAIL_HOST_PASSWORD = 'RunDev123'
+EMAIL_HOST_USER = 'mail@icobaworld.org'
+EMAIL_HOST_PASSWORD = 'mYFEOGd3HQ'
 
+
+# MAIL_MAILER=smtp
+# MAIL_HOST=smtp.ionos.co.uk
+# MAIL_PORT=587
+# MAIL_USERNAME=mail@icobaworld.org
+# MAIL_PASSWORD=mYFEOGd3HQ
+# MAIL_ENCRYPTION=tls
+# MAIL_FROM_ADDRESS=info@icobaworld.org
+# MAIL_FROM_NAME="${APP_NAME}"
 
 
 
