@@ -124,5 +124,6 @@ class MyUserAdmin(UserAdmin):
 @admin.register(LogUserRoleForSemester)
 class LogUserRoleForSemesterAdmin(admin.ModelAdmin):
     
-    list_display = ('id','programme','owner')
+    # list_display = ('id','programme','owner')
+    pass
 

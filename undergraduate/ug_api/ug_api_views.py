@@ -93,30 +93,31 @@ def loadRegistrationsJson(request):
 
 
 
-# @login_required(login_url='index')
-# @api_view(['GET', 'POST'])
-# def loadJson(request):    
-#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/data_export_psql_19_01_2023/prog.json") as f:
-#         records = json.load(f)
+@login_required(login_url='index')
+@api_view(['GET', 'POST'])
+def loadJson_prog(request):    
+    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/14_03_2023/backup_prog_from_myself.json") as f:
+        records = json.load(f)
 
-#     for record in records:   
+    for index,record in enumerate(records, start=1):   
 
-#         fac = Programme( 
-#            programme_id = record['programme_id'] ,
-#            programme = record['programme'] ,
-#            department_id =  record['department_id'] ,
-#            deleted = record['deleted'],
-#            created = record['created'],
-#            updated = record['updated'],
-#            required_ctcup = record['required_ctcup'],
-#            required_cteup = record['required_cteup'],
-#            last_updated_by=request.user,
+        fac = Programme( 
+           id = index,
+           programme_code = record['programme_id'] ,
+           programme = record['programme'] ,
+           department_id =  record['department_id'] ,
+           deleted = record['deleted'],
+           created = record['created'],
+           updated = record['updated'],
+           required_ctcup = record['required_ctcup'],
+           required_cteup = record['required_cteup'],
+           last_updated_by=request.user,
          
-#             )
-#         fac.save()
-#         # return Response({'data':record})
+            )
+        fac.save()
+        # return Response({'data':record})
     
-#     return Response({'data':records[0:4]})
+    return Response({'data':records[0:4]})
 
 
 
@@ -256,44 +257,43 @@ def loadRegistrationsJson(request):
 
 @login_required(login_url='index')
 @api_view(['GET', 'POST'])
-def loadJson(request):
-    return    
+def loadJson_reg_summary(request):  
     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_REG_SUMMARY.json") as f:
         records = json.load(f)
 
-    for record in records:   
+    # for record in records:   
 
-        fac = RegSummary( 
-           matric_number_fk =  Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
-           semester = record['semester'] if 'semester' in record.keys() else None,
-           session_id = record['session_id'] if 'session_id' in record.keys() else None,
-           courses_taken = record['courses_taken'] if 'courses_taken' in record.keys() else None,
-           courses_passed = record['courses_passed'] if 'courses_passed' in record.keys() else None,
-           courses_failed = record['courses_failed'] if 'courses_failed' in record.keys() else None,
-           tnur = record['tnur'] if 'tnur' in record.keys() else None,
-           tnup = record['tnup'] if 'tnup' in record.keys() else None,
-           tnuf = record['tnuf'] if 'tnuf' in record.keys() else None,
-           ctnur = record['ctnur'] if 'ctnur' in record.keys() else None,
-           ctnup = record['ctnup'] if 'ctnup' in record.keys() else None,
-           ctcp = record['ctcp'] if 'ctcp' in record.keys() else None,
-           ctcup = record['ctcup'] if 'ctcup' in record.keys() else None,
-           cteup = record['cteup'] if 'cteup' in record.keys() else None,
-           wcrp = record['wcrp'] if 'wcrp' in record.keys() else None,
-           gpa = record['gpa'] if 'gpa' in record.keys() else None,
-           cgpa = record['cgpa'] if 'cgpa' in record.keys() else None,
-           acad_status = record['acad_status'] if 'acad_status' in record.keys() else None,
-           last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
-           last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
-           deleted = record['deleted'] if 'deleted' in record.keys() else None,
+    #     fac = RegSummary( 
+    #        matric_number_fk =  Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
+    #        semester = record['semester'] if 'semester' in record.keys() else None,
+    #        session_id = record['session_id'] if 'session_id' in record.keys() else None,
+    #        courses_taken = record['courses_taken'] if 'courses_taken' in record.keys() else None,
+    #        courses_passed = record['courses_passed'] if 'courses_passed' in record.keys() else None,
+    #        courses_failed = record['courses_failed'] if 'courses_failed' in record.keys() else None,
+    #        tnur = record['tnur'] if 'tnur' in record.keys() else None,
+    #        tnup = record['tnup'] if 'tnup' in record.keys() else None,
+    #        tnuf = record['tnuf'] if 'tnuf' in record.keys() else None,
+    #        ctnur = record['ctnur'] if 'ctnur' in record.keys() else None,
+    #        ctnup = record['ctnup'] if 'ctnup' in record.keys() else None,
+    #        ctcp = record['ctcp'] if 'ctcp' in record.keys() else None,
+    #        ctcup = record['ctcup'] if 'ctcup' in record.keys() else None,
+    #        cteup = record['cteup'] if 'cteup' in record.keys() else None,
+    #        wcrp = record['wcrp'] if 'wcrp' in record.keys() else None,
+    #        gpa = record['gpa'] if 'gpa' in record.keys() else None,
+    #        cgpa = record['cgpa'] if 'cgpa' in record.keys() else None,
+    #        acad_status = record['acad_status'] if 'acad_status' in record.keys() else None,
+    #        last_updated_by_old = record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
+    #        last_updated_date_old = record['last_update_date'] if 'last_update_date' in record.keys() else None,
+    #        deleted = record['deleted'] if 'deleted' in record.keys() else None,
       
 
-            last_updated_by_new=request.user,
+    #         last_updated_by_new=request.user,
          
-            )
-        fac.save()
+    #         )
+    #     fac.save()
         # return Response({'data':record})
     
-    return Response({'data':records[0:4]})
+    return Response({'data':len(records)})
 
 
 
@@ -304,10 +304,10 @@ def loadJson_reg(request):
     # return Response({'data':''}) 
     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/14_03_2023/registration.json") as f:
         records = json.load(f)
-
-    for record in records: 
-
-        fac = Registration( 
+    # 525718
+    for index,record in enumerate(records,start=1) : 
+        if index > 525718:
+            fac = Registration( 
            matric_number_fk = Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
            semester = record['semester'] if 'semester' in record.keys() else None,
            session_id = record['session_id'] if 'session_id' in record.keys() else None,
@@ -326,11 +326,10 @@ def loadJson_reg(request):
            last_updated_by_new=request.user,
          
             )
-        fac.save()
-        
+            fac.save()
         # return Response({'data':'testing'})
     
-    return Response({'data':records[0:4]})
+    return Response({'data':len(records)})
 
 
 # @login_required(login_url='index')
@@ -395,10 +394,10 @@ def loadJson_cur(request):
        with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/14_03_2023/curriculum.json") as f:
         records = json.load(f)
 
-        for record in records:   
+        for index, record in enumerate(records, start=1):   
 
             fac = Curriculum( 
-            programme_id = record['prog_code'],
+            programme = Programme.objects.filter(programme_code = record['prog_code']).first(),
             course_code = record['course_code'],
             status = record['status'],
             last_updated_by_old = record['last_updated_by'],
@@ -410,7 +409,8 @@ def loadJson_cur(request):
             
                 )
             fac.save()
-        # return Response({'data':record})
+            # return Response({'data':record})
+       
     
         return Response({'data':records[0:4]})
 
@@ -419,67 +419,67 @@ def loadJson_cur(request):
 
 
 
-# @login_required(login_url='index')
-# @api_view(['GET', 'POST'])
-# def loadJson(request):    
-#     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_STUDENT.json") as f:
-#         records = json.load(f)
+@login_required(login_url='index')
+@api_view(['GET', 'POST'])
+def loadJson_student(request):    
+    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/T_STUDENT.json") as f:
+        records = json.load(f)
 
-#     for record in records:   
-#         fac = Student(
-#             matric_number=record['matric_number'] if 'matric_number' in record.keys() else None,
-#             surname=record['surname'] if 'surname' in record.keys() else None,
-#             firstname=record['firstname'] if 'firstname' in record.keys() else None,
-#             sex=record['sex'] if 'sex' in record.keys() else None,
-#             current_level=record['current_level'] if 'current_level' in record.keys() else None,
-#             programme=record['programme'] if 'programme' in record.keys() else None,
-#             status=record['status'] if 'status' in record.keys() else None,
-#             last_updated_by_old=record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
-#             last_update_date_old=record['last_update_date'] if 'last_update_date' in record.keys() else None,
-#             deleted=record['deleted'] if 'deleted' in record.keys() else None,
-#             ctcp=record['ctcp'] if 'ctcp' in record.keys() else None,
-#             ctnur=record['ctnur'] if 'ctnur' in record.keys() else None,
-#             ctnup=record['ctnup'] if 'ctnup' in record.keys() else None,
-#             ctnuf=record['ctnuf'] if 'ctnuf' in record.keys() else None,
-#             cgpa=record['cgpa'] if 'cgpa' in record.keys() else None,
-#             ctcup=record['ctcup'] if 'ctcup' in record.keys() else None,
-#             cteup=record['cteup'] if 'cteup' in record.keys() else None,
-#             gpa= record['gpa'] if 'gpa' in record.keys() else None,
-#             prog_code=record['prog_code'] if 'prog_code' in record.keys() else None,
-#             notify_sms=record['notify_sms'] if 'notify_sms' in record.keys() else None,
-#             notify_email=record['notify_email'] if 'notify_email' in record.keys() else None,
-#             parent_pwd=record['parent_pwd'] if 'parent_pwd' in record.keys() else None,
-#             registration_pwd=record['registration_pwd'] if 'registration_pwd' in record.keys() else None,
-#             financial_flag=record['financial_flag'] if 'financial_flag' in record.keys() else None,
-#             notify_bursary_sms=record['notify_bursary_sms'] if 'notify_bursary_sms' in record.keys() else None,
-#             hold_record=record['hold_record'] if 'hold_record' in record.keys() else None,
-#             birth_date=record['birth_date'] if 'birth_date' in record.keys() else None,
-#             address=record['address'] if 'address' in record.keys() else None,
-#             email1=record['email1'] if 'email1' in record.keys() else None,
-#             email2=record['email2'] if 'email2' in record.keys() else None,
-#             student_phone=record['student_phone'] if 'student_phone' in record.keys() else None,
-#             parent_phone=record['parent_phone'] if 'parent_phone' in record.keys() else None,
-#             jamb_reg=record['jamb_reg'] if 'jamb_reg' in record.keys() else None,
-#             acad_status=record['acad_status'] if 'acad_status' in record.keys() else None,
-#             entry_mode=record['entry_mode'] if 'entry_mode' in record.keys() else None,
-#             lga=record['lga'] if 'lga' in record.keys() else None,
-#             state_origin=record['state_origin'] if 'state_origin' in record.keys() else None,
-#             country=record['country'] if 'country' in record.keys() else None,
-#             city_resident=record['city_resident'] if 'city_resident' in record.keys() else None,
-#             state_resident=record['state_resident'] if 'state_resident' in record.keys() else None,
-#             matric_date=record['matric_date'] if 'matric_date' in record.keys() else None,
-#             graduation_date=record['graduation_date'] if 'graduation_date' in record.keys() else None,
-#             picture=record['picture'] if 'picture' in record.keys() else None,
-#             run_mail=record['run_mail'] if 'run_mail' in record.keys() else None,
-#             degree_sought=record['degree_sought'] if 'degree_sought' in record.keys() else None,
-#             run_mail_2=record['run_mail_2'] if 'run_mail_2' in record.keys() else None,
-#             last_updated_by_new=request.user,
+    for record in records:   
+        fac = Student(
+            matric_number=record['matric_number'] if 'matric_number' in record.keys() else None,
+            surname=record['surname'] if 'surname' in record.keys() else None,
+            firstname=record['firstname'] if 'firstname' in record.keys() else None,
+            sex=record['sex'] if 'sex' in record.keys() else None,
+            current_level=record['current_level'] if 'current_level' in record.keys() else None,
+            programme=record['programme'] if 'programme' in record.keys() else None,
+            status=record['status'] if 'status' in record.keys() else None,
+            last_updated_by_old=record['last_updated_by'] if 'last_updated_by' in record.keys() else None,
+            last_update_date_old=record['last_update_date'] if 'last_update_date' in record.keys() else None,
+            deleted=record['deleted'] if 'deleted' in record.keys() else None,
+            ctcp=record['ctcp'] if 'ctcp' in record.keys() else None,
+            ctnur=record['ctnur'] if 'ctnur' in record.keys() else None,
+            ctnup=record['ctnup'] if 'ctnup' in record.keys() else None,
+            ctnuf=record['ctnuf'] if 'ctnuf' in record.keys() else None,
+            cgpa=record['cgpa'] if 'cgpa' in record.keys() else None,
+            ctcup=record['ctcup'] if 'ctcup' in record.keys() else None,
+            cteup=record['cteup'] if 'cteup' in record.keys() else None,
+            gpa= record['gpa'] if 'gpa' in record.keys() else None,
+            prog_code=record['prog_code'] if 'prog_code' in record.keys() else None,
+            notify_sms=record['notify_sms'] if 'notify_sms' in record.keys() else None,
+            notify_email=record['notify_email'] if 'notify_email' in record.keys() else None,
+            parent_pwd=record['parent_pwd'] if 'parent_pwd' in record.keys() else None,
+            registration_pwd=record['registration_pwd'] if 'registration_pwd' in record.keys() else None,
+            financial_flag=record['financial_flag'] if 'financial_flag' in record.keys() else None,
+            notify_bursary_sms=record['notify_bursary_sms'] if 'notify_bursary_sms' in record.keys() else None,
+            hold_record=record['hold_record'] if 'hold_record' in record.keys() else None,
+            birth_date=record['birth_date'] if 'birth_date' in record.keys() else None,
+            address=record['address'] if 'address' in record.keys() else None,
+            email1=record['email1'] if 'email1' in record.keys() else None,
+            email2=record['email2'] if 'email2' in record.keys() else None,
+            student_phone=record['student_phone'] if 'student_phone' in record.keys() else None,
+            parent_phone=record['parent_phone'] if 'parent_phone' in record.keys() else None,
+            jamb_reg=record['jamb_reg'] if 'jamb_reg' in record.keys() else None,
+            acad_status=record['acad_status'] if 'acad_status' in record.keys() else None,
+            entry_mode=record['entry_mode'] if 'entry_mode' in record.keys() else None,
+            lga=record['lga'] if 'lga' in record.keys() else None,
+            state_origin=record['state_origin'] if 'state_origin' in record.keys() else None,
+            country=record['country'] if 'country' in record.keys() else None,
+            city_resident=record['city_resident'] if 'city_resident' in record.keys() else None,
+            state_resident=record['state_resident'] if 'state_resident' in record.keys() else None,
+            matric_date=record['matric_date'] if 'matric_date' in record.keys() else None,
+            graduation_date=record['graduation_date'] if 'graduation_date' in record.keys() else None,
+            picture=record['picture'] if 'picture' in record.keys() else None,
+            run_mail=record['run_mail'] if 'run_mail' in record.keys() else None,
+            degree_sought=record['degree_sought'] if 'degree_sought' in record.keys() else None,
+            run_mail_2=record['run_mail_2'] if 'run_mail_2' in record.keys() else None,
+            last_updated_by_new=request.user,
          
-#             )
-#         fac.save()
-#         # return Response({'data':record})
+            )
+        fac.save()
+        # return Response({'data':record})
     
-#     return Response({'data':records[0:4]})
+    return Response({'data':records[0:4]})
 
 
 

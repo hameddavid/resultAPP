@@ -23,7 +23,7 @@ def approve_disapprove_user_roles_in_semester(request):
             try:
                 roles_log = LogUserRoleForSemester.objects.filter(id=request.data.get('id')).first()
                 if roles_log is not None:
-                    user = User.objects.filter(email=roles_log.owner).first()
+                    user = User.objects.filter(email=roles_log.owner_id).first()
                 else:
                     return Response({'status':'failed','message':'Error fetching user/roles 1','data':''}, status=status.HTTP_400_BAD_REQUEST)
             except LogUserRoleForSemester.DoesNotExist:
@@ -34,8 +34,8 @@ def approve_disapprove_user_roles_in_semester(request):
                 roles_log.approved_by = request.user
                 roles_log.save()
                 user.role.update(roles_log.roles) 
-                user.programme = Programme.objects.filter( programme_id=roles_log.programme_id).first()
-                department = Department.objects.filter( id=roles_log.id).first() 
+                user.programme = Programme.objects.filter( programme_code=roles_log.programme_id).first()
+                department = Department.objects.filter( id=roles_log.department_id).first() 
                 user.department = department
                 user.faculty = Faculty.objects.filter( id=department.faculty_id).first() 
                 user.save()
@@ -48,6 +48,7 @@ def approve_disapprove_user_roles_in_semester(request):
                 user.role[session_semester_config().id] = []
                 user.programme = None
                 user.department = None
+                user.faculty = None
                 user.save()
                 return Response({'status':'success','message':'User roles successfully disapproved'}, status=status.HTTP_200_OK)
 

@@ -37,7 +37,7 @@ class Department(models.Model):
         db_table = "ug_departments"
 
     def __str__(self) -> str:
-        return self.id
+        return self.department
         
     def save(self, *args, **kwargs):
         self.department.upper()
@@ -45,13 +45,13 @@ class Department(models.Model):
 
 
 class Programme(models.Model):
-    programme_id = models.CharField(max_length=10, primary_key=True)
-    programme = models.CharField(max_length=50, null=False, blank=False)
+    programme_code = models.CharField( max_length=10, unique=True )
+    programme = models.CharField(max_length=50, )
     department = models.ForeignKey(Department, on_delete=models.RESTRICT)
-    required_ctcup = models.IntegerField(default=0)   #REQUIRED_CTCUP
-    required_cteup = models.IntegerField(default=0)   #REQUIRED_CTEUP
+    required_ctcup = models.IntegerField(default=0,null=True, blank=True)   #REQUIRED_CTCUP
+    required_cteup = models.IntegerField(default=0,null=True, blank=True)   #REQUIRED_CTEUP
     last_updated_by = models.ForeignKey('users.User',to_field='email', on_delete=models.RESTRICT,null=True, blank=True, related_name='ug_programme_user_related')
-    deleted = models.CharField(max_length=1, default='N',null=True, blank=True)
+    deleted = models.CharField(max_length=1, default='N')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
@@ -59,12 +59,14 @@ class Programme(models.Model):
         db_table = "ug_programmes"
 
     def __str__(self) -> str:
-        return self.programme_id
+         return "{} ({})".format(self.programme, self.programme_code)
     
     def save(self, *args, **kwargs):
         self.programme.upper()
-        self.programme_id.upper()
+        self.programme_code.upper()
         super(Programme, self).save(*args, *kwargs)
+
+
 
 
 class CourseManager(models.Manager):
@@ -131,7 +133,7 @@ class Curriculum(models.Model):
         SIX_H = "600", '600' 
         SEVEN_H = "700", '700' 
         
-    programme = models.ForeignKey(Programme, on_delete=models.RESTRICT, related_name='ug_curriculum_program_related')
+    programme = models.ForeignKey(Programme, on_delete=models.RESTRICT, related_name='ug_curriculum_program_related',to_field='programme_code')
     course_code = models.CharField(max_length=15, null=False, blank=False)
     status =  models.CharField(max_length=1, choices=Status.choices, default=Status.COMPULSORY)
     last_updated_by_old = models.CharField(max_length=191,null=True, blank=True,default=' ')
@@ -413,8 +415,8 @@ class LecturerCourse(models.Model):
     lecturer = models.ForeignKey('users.User', related_name='LecCourse_lecturer_rn', to_field='email', on_delete=models.RESTRICT, null=False,blank=False)
     status =  models.CharField(max_length=15, choices=Status.choices, default=Status.PENDING)
     settings = models.ForeignKey('base.Setting', related_name='LecCourse_settings_rn', on_delete=models.RESTRICT, null=False,blank=False)
-    programme = models.ForeignKey('undergraduate.Programme', on_delete=models.RESTRICT)
-    department = models.ForeignKey('undergraduate.Department', on_delete=models.RESTRICT)
+    programme = models.ForeignKey('undergraduate.Programme', on_delete=models.RESTRICT,to_field='programme_code')
+    department = models.ForeignKey('undergraduate.Department', on_delete=models.RESTRICT, to_field='id')
     approved_by = models.ForeignKey('users.User', related_name='LecCourse_approved_by_rn', to_field='email',blank=True,null=True, on_delete=models.RESTRICT)
     approved_at = models.DateTimeField(auto_now_add=True)
     approval_details = models.TextField(blank=True, null=True)

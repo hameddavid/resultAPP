@@ -52,9 +52,10 @@ def approve_disapprove_user_courses_in_semester(request):
 def get_user_courses_in_semester_for_approval(request):
     # ug/api/get-user-courses-in-semester-for-approval
     if 'email' in request.POST.keys() and request.POST['email']:
+        settings = session_semester_config()
         courses = [{'id':row.id,'course_code':row.course_code,'lecturer':row.lecturer.email}
          for row in LecturerCourse.objects.filter(lecturer=request.POST['email'],
-        settings=session_semester_config().id)]
+        settings=settings.id, status='PENDING')]
         return Response({'status':'success','message':'Courses gotten successfully!','data':courses}, status=status.HTTP_200_OK)
 
     return Response({'status':'failed','message':'Error fetching courses','data':''}, status=status.HTTP_400_BAD_REQUEST)
