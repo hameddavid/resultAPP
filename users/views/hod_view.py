@@ -14,7 +14,7 @@ from users.userForm import UserForm
 from users.models import User,LogUserRoleForSemester
 import json, os, re,random,string
 from django.forms.models import model_to_dict
-from undergraduate.models import Course, Curriculum,Student,Department,Programme,RegSummary,Student,Registration
+from undergraduate.models import Course, Curriculum,Department,Programme,RegSummary,Student,Registration
 from collections import Counter
 
 

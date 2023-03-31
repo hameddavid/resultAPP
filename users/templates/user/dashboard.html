@@ -26,8 +26,8 @@
                                     <div class="d-flex align-items-center">
                                         <div class="avatar lg  rounded-1 no-thumbnail bg-lightyellow color-defult"><i class="bi bi-journal-check fs-4"></i></div>
                                         <div class="flex-fill ms-4">
+                                            {% if user.user_roles_lec %}
                                             <div class="">Approved Courses</div>
-                                            {% if user.user_roles_fo %}
                                             <h5 class="mb-0 ">({{request.session.appCourses}})</h5>
                                             {% endif %}
                                         </div>
@@ -42,8 +42,10 @@
                                     <div class="d-flex align-items-center">
                                         <div class="avatar lg  rounded-1 no-thumbnail bg-lightblue color-defult"><i class="bi bi-list-check fs-4"></i></div>
                                         <div class="flex-fill ms-4">
+                                            {% if user.user_roles_lec %}
                                             <div class="">Pending Courses</div>
                                             <h5 class="mb-0 ">({{request.session.pendCourses}})</h5>
+                                            {% endif %}
                                         </div>
                                         <a href="{% url 'pending_courses' %}" title="Pending_Courses" class="btn btn-link text-decoration-none  rounded-1"><i class="icofont-hand-drawn-right fs-2 "></i></a>
                                     </div>

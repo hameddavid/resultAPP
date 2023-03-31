@@ -12,10 +12,9 @@ from users import helpers
 from base.baseHelper import session_semester_config, session_semester_config_always, check_network
 from users.userForm import UserForm
 from users.models import User
-from course.models import LecturerCourse,Course
 import json, os, re,random,string
 from django.forms.models import model_to_dict
-from undergraduate.models import Course, Curriculum,Student,Department,Programme,RegSummary,Registration
+from undergraduate.models import Course, Curriculum,Department,Programme,RegSummary,Registration,LecturerCourse
 from collections import Counter
 from rest_framework import status, generics
 
@@ -76,8 +75,8 @@ def userlogin(request):
                                 user.save()
                             request.session['settings'] = model_to_dict(session_semester_config())
                             # Lecturer courses for this semester
-                            request.session['pendCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=0)).count()
-                            request.session['appCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status=10)).count()
+                            request.session['pendCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status='PENDING')).count()
+                            request.session['appCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status='APPROVED')).count()
                             
                             # return redirect('dashboard')
                             return JsonResponse({'data':'','status':'success','message':'Login successful!'}, safe=False, status=status.HTTP_200_OK)

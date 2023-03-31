@@ -9,7 +9,7 @@ from django.db.models import Prefetch
 from base.baseHelper import session_semester_config, session_semester_config_always
 from .ug_serializer import (SettingSerializer,LecturerCourseSerializer,RegistrationStudSerializer,UndergraduateProgrammeSerializer,ClassBroadsheetSemesterSessionSerializer,
                     UndergraduateProgrammeSerializer,UndergraduateCourseSerializer)
-from undergraduate.models import (Faculty, Department,Programme,Student,Course,Curriculum,
+from undergraduate.models import (Faculty, Department,Programme,Course,Curriculum,
 Registration,RegSummary,LecturerCourse)
 
 
@@ -59,15 +59,15 @@ lecturer_course_view = LecturerCourseView.as_view()
 
 
 class ClassBroadsheetSemesterSessionList(generics.ListAPIView):
-    queryset = Student.objects.all()
+    # queryset = Student.objects.all()
     serializer_class = ClassBroadsheetSemesterSessionSerializer
 
     def get_queryset(self):
         print(self.kwargs)
         user = self.request.user
         reg_q = Registration.objects.filter(session_id='2019/2020', semester='1')
-        return Student.objects.prefetch_related(Prefetch('ug_reg_stud_related',queryset=reg_q)).filter(prog_code='NUR',current_level='400',
-        status='CURRENT').order_by('matric_number')
+        # return Student.objects.prefetch_related(Prefetch('ug_reg_stud_related',queryset=reg_q)).filter(prog_code='NUR',current_level='400',
+        # status='CURRENT').order_by('matric_number')
    
     def list(self, request):
         queryset = self.get_queryset()
@@ -138,6 +138,8 @@ class UndergraduateCourseListCurriculumBased(generics.ListCreateAPIView,generics
             status='PENDING', settings=session_semester_config(),programme=request.user.programme,department=request.user.department)
              for course in request.data.getlist('courses[]')]
             bulk_create = LecturerCourse.objects.bulk_create(courses_obj, ignore_conflicts=True)
+            request.session['pendCourses'] = LecturerCourse.objects.filter(lecturer=request.user,status='PENDING').count()
+            request.session.modified = True
             return Response({'status':'success','message':'Courses added successfully!','data':""}, status=status.HTTP_200_OK)
 
 undergraduate_course_list_curriculum_base = UndergraduateCourseListCurriculumBased.as_view()

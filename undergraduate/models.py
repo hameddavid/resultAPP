@@ -168,7 +168,7 @@ class Curriculum(models.Model):
 
 
 class Student(models.Model):
-    matric_number = models.CharField(max_length=50,null=False,blank=False,unique=True)
+    matric_number = models.CharField(max_length=50, null=False,blank=False,unique=True)
     surname = models.CharField(max_length=50,null=True,blank=True)
     firstname = models.CharField(max_length=50,null=True,blank=True)
     sex = models.CharField(max_length=1,null=True,blank=True)
@@ -342,8 +342,6 @@ class RegSummary(models.Model):
 
 class Registration(models.Model):
     DELETED_CHOICES = [('N','N'),('Y','Y')]
-
-    # matric_number = models.CharField(max_length=45)
     matric_number_fk = models.ForeignKey(Student,to_field='matric_number', related_name='ug_reg_stud_related', on_delete=models.RESTRICT,blank=True, null=True)
     semester = models.CharField(max_length=30, blank=False, null=False)
     session_id = models.CharField(max_length=30, blank=False, null=False)

@@ -96,8 +96,8 @@ admin.site.register(RegSummary)
 class RegistrationAdmin(admin.ModelAdmin):
     fields = ['matric_number_fk','course_code','status','semester']
     list_display = ['matric_number_fk','course_code','session_id','semester','status','score'
-    ,'last_updated_by_new','deleted','created']
-    list_editable = ['deleted']
+    ,'grade','deleted','created']
+    list_editable = ['deleted','score']
     search_fields = ('matric_number_fk','course_code',)
     ordering = ('session_id','matric_number_fk',)
     list_per_page = 100

@@ -12,7 +12,7 @@ from django.db import  transaction
 from base.baseHelper import session_semester_config, session_semester_config_always
 from .ug_serializer import (SettingSerializer,LecturerCourseSerializer,RegistrationStudSerializer,UndergraduateProgrammeSerializer,ClassBroadsheetSemesterSessionSerializer,
                     UndergraduateProgrammeSerializer,UndergraduateCourseSerializer)
-from undergraduate.models import (Faculty, Department,Programme,Student,Course,Curriculum,
+from undergraduate.models import (Faculty, Department,Programme,Course,Curriculum,
 Registration,RegSummary,LecturerCourse)
 
 
