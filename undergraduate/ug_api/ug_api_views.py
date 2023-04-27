@@ -299,8 +299,7 @@ def loadJson_reg_summary(request):
 
 @login_required(login_url='index')
 @api_view(['GET', 'POST'])
-def loadJson_reg(request):   
-    # return Response({'data':''}) 
+def loadJson_reg(request):
     with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/14_03_2023/registration.json") as f:
         records = json.load(f)
     # 525718
@@ -321,7 +320,7 @@ def loadJson_reg(request):
            unit_id = record['unit_id'] if 'unit_id' in record.keys() else None,
            app_user_id = record['app_user_id'] if 'app_user_id' in record.keys() else None, 
            last_updated_by_new=request.user,
-          ) for record in records]
+          ) for record in records[600000:]]
 
         Registration.objects.bulk_create(regList)  
     

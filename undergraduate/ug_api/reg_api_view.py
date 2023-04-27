@@ -15,21 +15,36 @@ from .ug_serializer import (SettingSerializer,LecturerCourseSerializer,Registrat
 from undergraduate.models import (Faculty, Department,Programme,Course,Curriculum,
 Registration,RegSummary,LecturerCourse)
 
+import ipaddress
+
+# from django.http import HttpRequest
+# from user_agents import parse
+# import ipaddress
+
+# def get_client_info(request: HttpRequest):
+#     user_agent = parse(request.META['HTTP_USER_AGENT'])
+#     os = user_agent.os.family
+#     browser = user_agent.browser.family
+#     ip_address = ipaddress.ip_address(request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR')))
+#     return {'os': os, 'browser': browser, 'ip_address': str(ip_address)}
 
 
 
 @login_required(login_url='index')
 @api_view(['GET', 'POST'])
 def submit_student_reg_score(request):
-    
+    ip_address = ipaddress.ip_address(request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR')))
+    print(ip_address)
     if 'course_code' in request.POST and request.POST['course_code']:
         reg_score = [{'id':key, 'score':value} for key,value in request.POST.items() if key !='course_code' and key !='myProjectTable_length' ]
-        updated = Registration.objects.bulk_update(
-            [Registration(id= row['id'], score=row['score'])
-            for row in reg_score],
-            ["score"],
-            batch_size=1000)
-        return Response({'status':'success','message':'Records updated successfully!','data':updated}, status=status.HTTP_200_OK)
+        reg_score = reg_score + [1,2,3]
+        print(reg_score)
+        # updated = Registration.objects.bulk_update(
+        #     [Registration(id= row['id'], score=row['score'])
+        #     for row in reg_score],
+        #     ["score"],
+        #     batch_size=1000)
+        # return Response({'status':'success','message':'Records updated successfully!','data':updated}, status=status.HTTP_200_OK)
     
     return Response({'status':'failed','message':'Cant find course code','data':''}, status=status.HTTP_400_BAD_REQUEST)
 

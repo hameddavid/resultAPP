@@ -7,6 +7,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
 from .models import (User, LogUserRoleForSemester)
+from undergraduate.models import (Programme, Department,Faculty)
 from base.baseHelper import session_semester_config
 
 # admin.site.unregister(User)
@@ -75,6 +76,38 @@ def add_to_current_semester(modeladmin, request, queryset):
 def remove_to_current_semester(modeladmin, request, queryset):
     queryset.filter(is_superuser=False, is_admin=False).update(semester_session_id=1)
 
+@admin.action(description='Approve user roles for current semester')
+def approve_user_roles_for_current_semester(modeladmin, request, queryset):
+    current_settings = session_semester_config()
+    for obj in queryset:
+         roles_log = LogUserRoleForSemester.objects.filter(role_status='PENDING',owner=obj.email, semester_session=current_settings.id).first()
+         if roles_log is not None:
+             roles_log.role_status = "APPROVED"
+             roles_log.approved_by = request.user
+             roles_log.save()
+             obj.role.update(roles_log.roles) 
+             obj.programme = Programme.objects.filter( programme_code=roles_log.programme_id).first()
+             department = Department.objects.filter( id=roles_log.department_id).first() 
+             obj.department = department
+             obj.faculty = Faculty.objects.filter( id=department.faculty_id).first() 
+             obj.save()
+    # queryset.filter(is_superuser=False, is_admin=False).update(semester_session_id=1)
+
+@admin.action(description='Disapprove user roles for current semester')
+def disapprove_user_roles_for_current_semester(modeladmin, request, queryset):
+    current_settings = session_semester_config()
+    for obj in queryset:
+         roles_log = LogUserRoleForSemester.objects.filter(role_status='APPROVED',owner=obj.email, semester_session=current_settings.id).first()
+         if roles_log is not None:
+             roles_log.role_status = "PENDING"
+             roles_log.approved_by = None
+             roles_log.save()
+             obj.role[session_semester_config().id] = []
+             obj.programme = None
+             obj.department = None
+             obj.faculty = None
+             obj.save()
+
 
 @admin.register(User)
 class MyUserAdmin(UserAdmin):
@@ -85,12 +118,12 @@ class MyUserAdmin(UserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email','programme','department','semester_session_id', 'role', 'otp', 'is_admin','is_active','created')
+    list_display = ('email','programme','department','semester_session_id', 'role', 'otp', 'is_admin','is_active','is_staff','created')
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('programme','department','role',)}),
-        ('Permissions', {'fields': ('is_admin','is_active',)}),
+        ('Permissions', {'fields': ('is_admin','is_active','is_staff',)}),
         ('Important dates',{'fields':('last_login','created')}),
         ('Advanced options',{ 'classes':('collapse',),'fields':('groups','user_permissions') }),
     )
@@ -106,13 +139,13 @@ class MyUserAdmin(UserAdmin):
     ordering = ('email','-created',)
     filter_horizontal = ()
     readonly_fields = ['created',]
-    list_editable = ['is_active','is_admin']
+    list_editable = ['is_active','is_admin','is_staff']
     list_per_page = 20
     # def get_actions(self, request):
     #     actions = super(ReadOnlyAdminMixin, self).get_actions(request)
     #     del actions["delete_selected"]
     #     return actions
-    actions = [activate_users,deactivate_users,deactivate_users_in_semester,activate_users_in_semester,add_to_current_semester,remove_to_current_semester]
+    actions = [activate_users,deactivate_users,deactivate_users_in_semester,activate_users_in_semester,add_to_current_semester,remove_to_current_semester,approve_user_roles_for_current_semester,disapprove_user_roles_for_current_semester]
     # prepopulated_fields = {'slug': ['title']}
 
 
