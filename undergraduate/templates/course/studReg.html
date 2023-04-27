@@ -54,7 +54,7 @@
                                                         </td>
                                                         <td>
                                                             <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                                <input class="form-control form-control-md score" name="{{reg.id}}" type="text" value="{{reg.score}}" required>     
+                                                                <input class="form-control form-control-md score" data-id="{{forloop.counter}}" name="{{reg.id}}" type="text" value="{{reg.score}}" required>     
                                                             </div>
                                                         </td>
                                                         <td>
@@ -68,7 +68,7 @@
                                         </table>
                                         <div class="btn-group" role="group" aria-label="Basic outlined example">
                                             <input type="text" name="course_code" value="{{course}}" hidden>
-                                            
+                                            <input type="text" id="user_agent" name="user_agent" value="">
                                             <button type="submit" id="btnScoreInput" class="btn btn-primary">Submit</button>    
                                         </div>
                                     </form>

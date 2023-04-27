@@ -173,11 +173,12 @@ $(document).ready(function ($) {
   });
 
   $(".scoreTable").on("focusout", ".score", function () {
+    const id = $(this).data("id");
     const score = $(this).val();
     const grade = getGrade(score);
-    const tr = $(this).closest("tr");
-    const current_row = tr.index() + 1;
-    $("#" + current_row).val(grade);
+    //const tr = $(this).closest("tr");
+    //const current_row = tr.index() + 1;
+    $("#" + id).val(grade);
   });
 
   const getGrade = (score) => {
@@ -254,6 +255,8 @@ $(document).ready(function ($) {
     var table = $("#myProjectTable").DataTable();
     var form = this;
     var params = table.$("input").serializeArray();
+    const user_agent = navigator.userAgent;
+    $("#user_agent").val(user_agent);
     e.preventDefault();
 
     $.each(params, function () {
@@ -299,6 +302,8 @@ $(document).ready(function ($) {
   $("#massUploadForm").on("submit", function (e) {
     e.preventDefault();
     const course = $("input[name=course_code]").val();
+    const user_agent = navigator.userAgent;
+    $("#user_agent").val(user_agent);
     const formData = new FormData(this);
     formData.append("course_code", course);
     $.ajax({
