@@ -255,6 +255,8 @@ $(document).ready(function ($) {
     var table = $("#myProjectTable").DataTable();
     var form = this;
     var params = table.$("input").serializeArray();
+    const user_agent = navigator.userAgent;
+    $("#user_agent").val(user_agent);
     e.preventDefault();
 
     $.each(params, function () {
