@@ -302,6 +302,8 @@ $(document).ready(function ($) {
   $("#massUploadForm").on("submit", function (e) {
     e.preventDefault();
     const course = $("input[name=course_code]").val();
+    const user_agent = navigator.userAgent;
+    $("#user_agent").val(user_agent);
     const formData = new FormData(this);
     formData.append("course_code", course);
     $.ajax({
