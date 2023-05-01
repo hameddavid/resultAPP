@@ -15,7 +15,9 @@ from .ug_serializer import (SettingSerializer,LecturerCourseSerializer,Registrat
 from undergraduate.models import (Faculty, Department,Programme,Course,Curriculum,
 Registration,RegSummary,LecturerCourse)
 
+from django.utils import timezone
 import ipaddress
+from user_agents import parse
 
 # from django.http import HttpRequest
 # from user_agents import parse
@@ -33,18 +35,29 @@ import ipaddress
 @login_required(login_url='index')
 @api_view(['GET', 'POST'])
 def submit_student_reg_score(request):
+
+     # Parse the user agent string
+    user_agent = parse(request.META['HTTP_USER_AGENT'])
+    # Extract the relevant information
+    os = user_agent.os.family
+    browser = user_agent.browser.family
+    device = user_agent.device.family
     ip_address = ipaddress.ip_address(request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR')))
-    print(ip_address)
+    now = timezone.now()
+    formatted_date = now.strftime('%Y-%m-%d')
+    formatted_time = now.strftime('%H:%M:%S')
+    date_time =  str(formatted_date) +""", """+str(formatted_time)
+    user_agent_ = """" {user_email => """+str(request.user.email)+""" BROWSER => """+str(browser)+""" IP => """+str(ip_address)+""" DEVICE => """+str(device)+""" OS => """+str(os)+""" datetime => """+date_time+"""}"""
+    
     if 'course_code' in request.POST and request.POST['course_code']:
-        reg_score = [{'id':key, 'score':value} for key,value in request.POST.items() if key !='course_code' and key !='myProjectTable_length' ]
-        reg_score = reg_score + [1,2,3]
-        print(reg_score)
-        # updated = Registration.objects.bulk_update(
-        #     [Registration(id= row['id'], score=row['score'])
-        #     for row in reg_score],
-        #     ["score"],
-        #     batch_size=1000)
-        # return Response({'status':'success','message':'Records updated successfully!','data':updated}, status=status.HTTP_200_OK)
+        reg_score = [{'id':key, 'score':value} for key,value in request.POST.items() if key !='course_code' 
+                    and key !='myProjectTable_length' and key !='user_agent']
+        updated = Registration.objects.bulk_update(
+            [Registration(id= row['id'], score=row['score'], last_score_change_by_ip= user_agent_)
+            for row in reg_score],
+            ["score","last_score_change_by_ip"],
+            batch_size=1000)
+        return Response({'status':'success','message':'Records updated successfully!','data':updated}, status=status.HTTP_200_OK)
     
     return Response({'status':'failed','message':'Cant find course code','data':''}, status=status.HTTP_400_BAD_REQUEST)
 

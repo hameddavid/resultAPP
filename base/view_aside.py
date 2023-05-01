@@ -7,6 +7,15 @@ from base.baseHelper import session_semester_config
 
 
 
+from django.utils import timezone
+
+def my_view(request):
+    now = timezone.now()
+    formatted_date = now.strftime('%Y-%m-%d')
+    formatted_time = now.strftime('%H:%M:%S')
+    return HttpResponse(f'Current date: {formatted_date}, current time: {formatted_time}')
+
+
 def test_score_input(request):
     i_course_code = request.POST.get('course','')
     if i_course_code is not None:

@@ -361,7 +361,7 @@ class Registration(models.Model):
     level = models.CharField(max_length=5,blank=True, null=True)
     record_status = models.CharField(max_length=5,blank=True, null=True, default='OFF') #ON/OFF
     last_updated_by_new = models.ForeignKey('users.User',to_field='email', on_delete=models.RESTRICT, related_name='ug_registration_user_related',null=True,blank=True)
-    last_score_change_by_ip = models.CharField(max_length=30, blank=False, null=False, default='default')
+    last_score_change_by_ip = models.TextField(blank=False, null=False, default='default')
     score_history = models.TextField(blank=False, null=False, default='default')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

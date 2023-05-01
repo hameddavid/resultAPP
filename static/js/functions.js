@@ -257,6 +257,7 @@ $(document).ready(function ($) {
     var params = table.$("input").serializeArray();
     const user_agent = navigator.userAgent;
     $("#user_agent").val(user_agent);
+    console.log(user_agent)
     e.preventDefault();
 
     $.each(params, function () {
