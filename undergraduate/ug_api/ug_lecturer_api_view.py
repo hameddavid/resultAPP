@@ -15,6 +15,7 @@ Registration,RegSummary,LecturerCourse)
 
 
 
+
 import json
 from datetime import datetime
 
@@ -78,11 +79,12 @@ class_broadsheet_semester_session_list = ClassBroadsheetSemesterSessionList.as_v
 
 
 class UndergraduateProgrammeList(generics.ListAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = Programme.objects.all()
     serializer_class = UndergraduateProgrammeSerializer
 
     def get_queryset(self):
-        return Programme.objects.all().order_by('programme_id')
+        return Programme.objects.all().order_by('programme_code')
    
     def list(self, request):
         queryset = self.get_queryset()

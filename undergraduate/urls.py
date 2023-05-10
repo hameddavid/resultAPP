@@ -16,7 +16,7 @@ urlpatterns = [
     path('load-json-courses', loadJson_courses),
     path('load-json-cur', loadJson_cur),
     path('load-json-stud', loadJson_student),
-    path('load-reg', loadRegistrationsJson),
+    path('load-stud-reg', loadRegistrationsJson),
     path('load-correction', correct_prog_dpt_diff),
     path('mycourse', views.my_courses, name='mycourse'),
     path('add_courses', views.addCourses, name='add_courses'),

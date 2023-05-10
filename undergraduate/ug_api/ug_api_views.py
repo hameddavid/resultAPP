@@ -25,7 +25,7 @@ def correct_prog_dpt_diff(request):
     return Response({'data':records})
 
 
-# @login_required(login_url='index')
+@login_required(login_url='index')
 @api_view(['GET', 'POST'])
 def loadRegistrationsJson(request):   
     # return Response({'data':''}) 
@@ -35,34 +35,14 @@ def loadRegistrationsJson(request):
         records = json.load(f)
         settings = session_semester_config()
         reg_list = [Registration(
-        matric_number_fk= reg['s_matric_number'],course_code = reg['s_course_code'],
+        matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']),course_code = reg['s_course_code'],
         semester = settings.semester_code,session_id = settings.session, unit = reg['s_course_unit'],
-        score = -1, status = reg['s_course_status'] ,level = reg['registration_level'],unit_id = reg['s_course_id'].split('*')[1]
+        score = -1, status = reg['s_course_status'] ,level = reg['registration_level'],
+        unit_id = reg['s_course_id'].split('*')[1]
         )
          for reg in records[:1]]
-        bulk_create = Registration.objects.bulk_create(reg_list, ignore_conflicts=True)
-        # new_data_list = []
-        # for item in bulk_create:
-        #     filter_list = list(filter(lambda row:row['matric_number'] == item.matric_number_fk , new_data_list))
-        #     if len(filter_list)>0:
-        #         filter_list[0]['courses_taken'] = int(filter_list[0]['courses_taken'])+ 1
-        #         filter_list[0]['tnur'] = int(filter_list[0]['tnur'])+ int(item.unit)
-        #         filter_list[0]['ctnur'] = int(filter_list[0]['ctnur'])+ int(item.unit)
-        #     else:
-        #         new_data_list.append({
-        #             'matric_number': item.matric_number_fk,'semester':item.semester,
-        #             'session_id' : item.session_id,'courses_taken':1,'courses_passed':0,'courses_failed':0,'tnur':item.unit,'tnup':0,
-        #             'tnuf':0,'wcrp':0,'gpa':0,'ctnur':item.unit,'ctnup':0,'cgpa':0,'ctcp':0,'ctcup':0,'cteup':0, 'acad_status':'', })
-
-        # reg_list2 = [RegSummary(
-        # matric_number_fk = Student.objects.get(matric_number = stud['matric_number']) ,semester = stud['semester'],
-        # session_id = stud['session_id'], courses_taken = stud['courses_taken'],
-        # courses_passed = stud['courses_passed'], courses_failed = stud['courses_failed'] ,
-        # tnur = stud['tnur'], tnup = stud['tnup'], tnuf = stud['tnuf'],wcrp = stud['wcrp'],gpa = stud['gpa'],
-        # ) for stud in new_data_list]
-        # bulk_create = RegSummary.objects.bulk_create(reg_list2, ignore_conflicts=True)		
-      
-        return Response({'data':bulk_create})
+        # bulk_create = Registration.objects.bulk_create(reg_list, ignore_conflicts=True)
+     
     
     return Response({'data':records[0:4]})
 
@@ -300,9 +280,8 @@ def loadJson_reg_summary(request):
 @login_required(login_url='index')
 @api_view(['GET', 'POST'])
 def loadJson_reg(request):
-    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/14_03_2023/registration.json") as f:
+    with open("C:/Users/PC/Desktop/New folder/data_export_10_05_2023/registrations.json") as f:
         records = json.load(f)
-    # 525718
         regList = [Registration( 
            matric_number_fk = Student.objects.get(matric_number=record['matric_number'] ) if 'matric_number' in record.keys() else None,
            semester = record['semester'] if 'semester' in record.keys() else None,
@@ -320,7 +299,7 @@ def loadJson_reg(request):
            unit_id = record['unit_id'] if 'unit_id' in record.keys() else None,
            app_user_id = record['app_user_id'] if 'app_user_id' in record.keys() else None, 
            last_updated_by_new=request.user,
-          ) for record in records[600000:]]
+          ) for record in records]
 
         Registration.objects.bulk_create(regList)  
     
