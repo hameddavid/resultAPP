@@ -1,0 +1,109 @@
+{% extends 'layouts/master.html' %}
+{% load static %}
+{% block title %} :: RUN Result - Admin Actions :: {% endblock title %}
+
+
+
+{% block content %}
+
+    <div id="mytask-layout" class="theme-indigo">
+        {% include 'partials/sidebar.html' %}
+        <div class="main px-lg-4 px-md-4">
+            {% include 'partials/navbar.html' %}
+            <div class="body d-flex py-lg-3 py-md-2">
+                <div class="container-xxl">
+                    <div class="row align-items-center">
+                        <div class="border-0 mb-4">
+                            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                                <h3 class="fw-bold mb-0">Admin Actions</h3>
+                            </div>
+                        </div>
+                    </div> <!-- Row end  -->
+                    <div class="row clearfix g-3">
+                      <div class="col-sm-12">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="row g-3 mb-3 row-deck">
+                                        <div class="col-md-12 col-lg-6 col-xl-6 col-xxl-6">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-12 col-md-7 col-lg-6 order-md-1 px-4">
+                                                          
+                                                            <h3 class="fw-bold ">Retroactive Registration</h3>
+                                                            <form method="post">
+                                                                {% csrf_token %}
+                                                            <div class="mb-2">
+                                                                <input class="form-control form-control-md" name="matric" id="matric" type="text" required>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <select class="form-control form-control-md" name="level" id="level" required>
+                                                                    <option value="">Select Level</option>
+                                                                    <option value="100">100</option>
+                                                                    <option value="100F">100F</option>
+                                                                    <option value="200">200</option>
+                                                                    <option value="300">300</option>
+                                                                    <option value="400">400</option>
+                                                                    <option value="400+">400+</option>
+                                                                    <option value="500">500</option>
+                                                                    <option value="500+">500+</option>
+                                                                    <option value="500">600</option>
+                                                                    <option value="500">700</option>
+                                                                    <option value="500">800</option>
+                                                                </select>
+                                                            </div>                                                            
+                                                            <div class="mb-2">
+                                                                <select class="form-control form-control-md" name="programme" id="programme">
+                                                                    <option value="">Select Programme</option>
+                                                                    {% for row in prog %}
+                                                                    <option value="{{row.id}}*{{row.department.id}}">{{row.programme}}</option>
+                                                                    {% endfor%}
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <select class="form-control form-control-md" name="session" id="session" required>
+                                                                    <option value="">Select Session</option>
+                                                                    {% for session in sessions %}
+                                                                    <option value="{{session.session}}">{{session.session}}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <select class="form-control form-control-md" name="semester" id="semester" required>
+                                                                    <option value="">Select Semester</option>
+                                                                    <option value="1">First Semester</option>
+                                                                    <option value="2">Second Semester</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <select class="form-control form-control-md" name="electives[]" multiple="multiple" required>
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <button type="submit" class="btn bg-secondary text-light btn-lg lift">Submit</button>
+                                                            </div>
+                                                            </form>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-6 col-xl-6 col-xxl-6">
+                                            <div class="alert alert-primary p-3 mb-0 w-100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jquery Page Js -->
+    <script src="{% static 'js/template.js' %}"></script>
+    <script src="{% static 'js/index.js' %}"></script>
+
+{% endblock content %}
