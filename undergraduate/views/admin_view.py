@@ -1,12 +1,13 @@
 
 from django.shortcuts import render,redirect
+from django.contrib.auth.decorators import login_required
 
 
 
+@login_required(login_url='index')
 def admin_reg_activities(request):
-    if  request.user.is_superuser or  request.user.is_admin:
-        
-        return render(request, 'admin/reg_activities.html')
+    if request.user.email in ['olaitanf@run.edu.ng','hamendment@gmail.com']:
+        return render(request, 'admin/admin_activities.html')
     
     return redirect('dashboard')
 

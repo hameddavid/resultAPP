@@ -73,3 +73,31 @@ user_ids_dict = {
 #     pass
 
 
+
+
+
+
+# CREATE OR REPLACE FUNCTION update_score_history()
+#     RETURNS TRIGGER
+#     LANGUAGE PLPGSQL
+# AS
+# $$
+# DECLARE p_ctnur float;
+
+# BEGIN 
+#      IF OLD.score IS DISTINCT FROM NEW.score THEN
+#         update ug_registration set grade = CONCAT_WS(E'\n', my_column, 'This is a new line.') 
+#         where course_code = NEW.course_code
+#         and session_id= NEW.session_id and semester = NEW.semester 
+#         and matric_number_fk_id = NEW.matric_number_fk_id;
+#         RETURN NEW;
+#     END IF;
+#     RETURN OLD;
+# END;
+# $$;
+# DROP TRIGGER IF EXISTS set_cumulative_for_new_reg_summary_record_trigger on public.ug_reg_summary;
+# CREATE TRIGGER set_cumulative_for_new_reg_summary_record_trigger
+#     BEFORE INSERT
+#     ON "ug_reg_summary"
+#     FOR EACH ROW
+# EXECUTE PROCEDURE set_cumulative_for_new_reg_summary_record()

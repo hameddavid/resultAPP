@@ -87,12 +87,12 @@ def userlogin(request):
                         # messages.error(request, )
                         user.otp = unique_user_otp_generator(6)
                         user.save()
-                        if check_network():
-                            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-                            print(helpers.send_email(user))
-                            # helpers.semester_activation_email(user)
-                        else:
-                            return JsonResponse({'data':'','status':'Failed','message':"No internet available to send you OTP, kindly connect to one"}, safe=False, status=status.HTTP_200_OK)
+                        # if check_network():
+                        #     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                        #     print(helpers.send_email(user))
+                        #     # helpers.semester_activation_email(user)
+                        # else:
+                        #     return JsonResponse({'data':'','status':'Failed','message':"No internet available to send you OTP, kindly connect to one"}, safe=False, status=status.HTTP_200_OK)
                         # return redirect('semester_activation')
                         return JsonResponse({'url':'otp','data':'','status':'success','message':f"Kindly activate your account for {session_semester_config().semester_name} {session_semester_config().session} academic session"}, safe=False, status=status.HTTP_200_OK)
             else:

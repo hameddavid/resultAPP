@@ -32,7 +32,7 @@ urlpatterns = [
     # path('master-sheet-sum-2', result_view.display_class_master_sheet_summary_exam_direct_from_reg_table, name='master_sheet_sum_2'),
     path('get-broadsheet-or-summary-for-print', views.get_broadsheet_or_summary_for_print, name='get_broadsheet_or_summary_for_print'),
 
-    path('admin-reg-activities', views.admin_reg_activities, name='admin_reg_activities'),
+    path('admin-activities', views.admin_reg_activities, name='admin_reg_activities'),
 
     path('api/', include('undergraduate.ug_api.ug_api_urls')),
 
