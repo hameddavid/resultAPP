@@ -29,59 +29,10 @@
                                                 <div class="card-body">
                                                     <div class="row align-items-center">
                                                         <div class="col-12 col-md-7 col-lg-6 order-md-1 px-4">
-                                                            <h3 class="fw-bold ">Retroactive Registration</h3>
-                                                            <form method="post">
-                                                                {% csrf_token %}
+                                                            <h3 class="fw-bold ">Actions</h3>
                                                             <div class="mb-2">
-                                                                <input class="form-control form-control-md" name="matric" id="matric" type="text" required>
+                                                                <a href="#" data-bs-toggle="modal" data-bs-target="#retroactive" class="btn bg-secondary text-light btn-lg lift">Retroactive Registration</a>
                                                             </div>
-                                                            <div class="mb-2">
-                                                                <select class="form-control form-control-md" name="level" id="level" required>
-                                                                    <option value="">Select Level</option>
-                                                                    <option value="100">100</option>
-                                                                    <option value="100F">100F</option>
-                                                                    <option value="200">200</option>
-                                                                    <option value="300">300</option>
-                                                                    <option value="400">400</option>
-                                                                    <option value="400+">400+</option>
-                                                                    <option value="500">500</option>
-                                                                    <option value="500+">500+</option>
-                                                                    <option value="500">600</option>
-                                                                    <option value="500">700</option>
-                                                                    <option value="500">800</option>
-                                                                </select>
-                                                            </div>                                                            
-                                                            <div class="mb-2">
-                                                                <select class="form-control form-control-md" name="programme" id="programme">
-                                                                    <option value="">Select Programme</option>
-                                                                    {% for row in prog %}
-                                                                    <option value="{{row.id}}*{{row.department.id}}">{{row.programme}}</option>
-                                                                    {% endfor%}
-                                                                </select>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <select class="form-control form-control-md" name="session" id="session" required>
-                                                                    <option value="">Select Session</option>
-                                                                    {% for session in sessions %}
-                                                                    <option value="{{session.session}}">{{session.session}}</option>
-                                                                    {% endfor %}
-                                                                </select>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <select class="form-control form-control-md" name="semester" id="semester" required>
-                                                                    <option value="">Select Semester</option>
-                                                                    <option value="1">First Semester</option>
-                                                                    <option value="2">Second Semester</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <select class="form-control form-control-md" name="electives[]" multiple="multiple" required>
-                                                                </select>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <button type="submit" class="btn bg-secondary text-light btn-lg lift">Submit</button>
-                                                            </div>
-                                                            </form>
                                                         </div> 
                                                     </div>
                                                 </div>
@@ -95,6 +46,73 @@
                                 </div>
                             </div>
                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="retroactive" tabindex="-1" aria-labelledby="addUserLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title  fw-bold" id="addUserLabel">Retroactive Registration/h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                <input class="form-control form-control-md" name="matric" id="matric" type="text" required>
+                            </div>
+                            <div class="mb-2">
+                                <select class="form-control form-control-md" name="level" id="level" required>
+                                    <option value="">Select Level</option>
+                                    <option value="100">100</option>
+                                    <option value="100F">100F</option>
+                                    <option value="200">200</option>
+                                    <option value="300">300</option>
+                                    <option value="400">400</option>
+                                    <option value="400+">400+</option>
+                                    <option value="500">500</option>
+                                    <option value="500+">500+</option>
+                                    <option value="500">600</option>
+                                    <option value="500">700</option>
+                                    <option value="500">800</option>
+                                </select>
+                            </div>                                                            
+                            <div class="mb-2">
+                                <select class="form-control form-control-md" name="programme" id="programme">
+                                    <option value="">Select Programme</option>
+                                    {% for row in prog %}
+                                    <option value="{{row.id}}*{{row.department.id}}">{{row.programme}}</option>
+                                    {% endfor%}
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <select class="form-control form-control-md" name="session" id="session" required>
+                                    <option value="">Select Session</option>
+                                    {% for session in sessions %}
+                                    <option value="{{session.session}}">{{session.session}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <select class="form-control form-control-md" name="semester" id="semester" required>
+                                    <option value="">Select Semester</option>
+                                    <option value="1">First Semester</option>
+                                    <option value="2">Second Semester</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <select class="form-control form-control-md" name="electives[]" multiple="multiple" required>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <button type="submit" class="btn bg-secondary text-light btn-lg lift">Submit</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
