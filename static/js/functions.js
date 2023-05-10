@@ -22,6 +22,22 @@ $(document).ready(function ($) {
     }
   });
 
+  $("#adviser").change(function () {
+    if (this.checked) {
+      $(".officer").hide();
+    } else {
+      $(".officer").show();
+    }
+  });
+
+  $("#officer").change(function () {
+    if (this.checked) {
+      $(".adviser").hide();
+    } else {
+      $(".adviser").show();
+    }
+  });
+
   $("#btnSubmitRole").click(function (e) {
     e.preventDefault();
     var formData = $("#formSubmitRole").serialize();
@@ -257,7 +273,7 @@ $(document).ready(function ($) {
     var params = table.$("input").serializeArray();
     const user_agent = navigator.userAgent;
     $("#user_agent").val(user_agent);
-    console.log(user_agent)
+    console.log(user_agent);
     e.preventDefault();
 
     $.each(params, function () {
