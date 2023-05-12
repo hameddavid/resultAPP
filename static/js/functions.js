@@ -189,6 +189,10 @@ $(document).ready(function ($) {
   });
 
   $(".scoreTable").on("focusout", ".score", function () {
+    if ($(this).val() > 100) {
+      alert("No scores above 100");
+      $(this).val("100");
+    }
     const id = $(this).data("id");
     const score = $(this).val();
     const grade = getGrade(score);
