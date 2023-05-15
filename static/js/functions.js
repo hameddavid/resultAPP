@@ -7,6 +7,7 @@ $(document).ready(function ($) {
   $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
 
   $(".dept").hide();
+  $(".level").hide();
 
   $("#hod").change(function () {
     if (this.checked) {
@@ -25,8 +26,10 @@ $(document).ready(function ($) {
   $("#adviser").change(function () {
     if (this.checked) {
       $(".officer").hide();
+      $(".level").show();
     } else {
       $(".officer").show();
+      $(".level").hide();
     }
   });
 
