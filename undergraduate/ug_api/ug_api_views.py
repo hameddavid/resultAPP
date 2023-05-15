@@ -58,20 +58,20 @@ def loadRegistrationsJson(request):
     jamb_no_list = []
     with open("C:/Users/PC/Desktop/New folder/data_export_10_05_2023/t_registrations_with_MATRIC_NUMBER.json") as f:
         records = json.load(f)
-        settings = session_semester_config()
-        reg_list = [Registration(
-        matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']),
-        course_code = reg['s_course_code'],
-        semester = settings.semester_code,
-        session_id = settings.session, 
-        unit = reg['s_course_unit'],
-        score = -1, 
-        status = reg['s_course_status'] ,
-        level = reg['registration_level'],
-        unit_id = reg['s_course_id'].split('*')[1]
-        )
-         for reg in records]
-        bulk_create = Registration.objects.bulk_create(reg_list, ignore_conflicts=True)
+        # settings = session_semester_config()
+        # reg_list = [Registration(
+        # matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']),
+        # course_code = reg['s_course_code'],
+        # semester = settings.semester_code,
+        # session_id = settings.session, 
+        # unit = reg['s_course_unit'],
+        # score = -1, 
+        # status = reg['s_course_status'] ,
+        # level = reg['registration_level'],
+        # unit_id = reg['s_course_id'].split('*')[1]
+        # )
+        #  for reg in records]
+        # bulk_create = Registration.objects.bulk_create(reg_list, ignore_conflicts=True)
      
     
     return Response({'data':len(records)})
