@@ -70,7 +70,6 @@ def userlogin(request):
                         if auth is not None:
                             login(request,auth)
                             if  f'{session_semester_config().id}' not in user.role.keys():
-                                print(f"{user.role.keys()} in")
                                 user.role[session_semester_config().id] = []
                                 user.save()
                             request.session['settings'] = model_to_dict(session_semester_config())
@@ -78,8 +77,8 @@ def userlogin(request):
                             request.session['pendCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status='PENDING')).count()
                             request.session['appCourses'] = LecturerCourse.objects.filter(Q(lecturer=request.user) & Q(status='APPROVED')).count()
                             
-                            # return redirect('dashboard')
                             return JsonResponse({'data':'','status':'success','message':'Login successful!'}, safe=False, status=status.HTTP_200_OK)
+                        
                         else:
                             return JsonResponse({'data':'','status':'Failed','message':'Invalid username/password (or inactive account)'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
 
@@ -87,13 +86,11 @@ def userlogin(request):
                         # messages.error(request, )
                         user.otp = unique_user_otp_generator(6)
                         user.save()
-                        # if check_network():
-                        #     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-                        #     print(helpers.send_email(user))
-                        #     # helpers.semester_activation_email(user)
-                        # else:
-                        #     return JsonResponse({'data':'','status':'Failed','message':"No internet available to send you OTP, kindly connect to one"}, safe=False, status=status.HTTP_200_OK)
-                        # return redirect('semester_activation')
+                        if check_network():
+                            helpers.semester_activation_email(user)
+                        else:
+                            return JsonResponse({'data':'','status':'Failed','message':"No internet available to send you OTP, kindly connect to one"}, safe=False, status=status.HTTP_200_OK)
+                        return redirect('semester_activation')
                         return JsonResponse({'url':'otp','data':'','status':'success','message':f"Kindly activate your account for {session_semester_config().semester_name} {session_semester_config().session} academic session"}, safe=False, status=status.HTTP_200_OK)
             else:
                 staff = Staff.objects.filter(email=email).first()
@@ -104,7 +101,7 @@ def userlogin(request):
                         helpers.send_email(user)
                         # helpers.semester_activation_email(user)
                     else:
-                        return JsonResponse({'data':'','status':'Failed','message':"No internet available to send you OTP, kindly connect to one"}, safe=False, status=status.HTTP_200_OK)
+                        return JsonResponse({'url':'otp','data':'','status':'success','message':"No internet available to send you OTP, kindly connect to one"}, safe=False, status=status.HTTP_200_OK)
                     # return redirect('otp')
                     return JsonResponse({'url':'otp','data':'','status':'success','message':f"Kindly activate your account for {session_semester_config().semester_name} {session_semester_config()} academic session"}, safe=False, status=status.HTTP_200_OK)
 

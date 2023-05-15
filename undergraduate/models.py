@@ -432,3 +432,18 @@ class LecturerCourse(models.Model):
 
 
 
+# class RegWithJAMB(models.Model):
+# # {"s_matric_number":"202211623863ha","s_program":"BUSINESS ADMINISTRATION",
+# #  "s_course_status":"C","s_course_code":"GST 209","s_course_id":
+# #  "GST 209*20130901","s_course_unit":"1",
+# #  "registration_level":"200","dt_date":"2023-04-28"}
+#     s_matric_number = models.CharField(max_length=45, blank=False, null=False)
+#     s_program = models.CharField(max_length=191, blank=False, null=False)
+#     s_course_status = models.CharField(max_length=3, blank=False, null=False)
+#     s_course_code = models.CharField(max_length=45, blank=False, null=False)
+#     s_course_id = models.CharField(max_length=45, blank=False, null=False)
+#     s_course_unit = models.CharField(max_length=2, blank=False, null=False)
+#     registration_level = models.CharField(max_length=45, blank=False, null=False)
+#     dt_date = models.CharField(max_length=45, blank=False, null=False)
+#     class Meta:
+#         db_table = "ug_reg_with_jamb_number"

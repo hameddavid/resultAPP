@@ -12,6 +12,32 @@ from base.baseHelper import session_semester_config, session_semester_config_alw
 import json
 from datetime import datetime
 
+
+@login_required(login_url='index')
+@api_view(['GET', 'POST'])
+def manage_course_reg(request):   
+    jamb_no_list = []
+    # with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/t_registrations.json") as f:
+    #     records = json.load(f)
+        # settings = session_semester_config()
+        # reg_list = [Registration(
+        # matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']),course_code = reg['s_course_code'],
+        # semester = settings.semester_code,session_id = settings.session, unit = reg['s_course_unit'],
+        # score = -1, status = reg['s_course_status'] ,level = reg['registration_level'],
+        # unit_id = reg['s_course_id'].split('*')[1]
+        # )
+        #  for reg in records[:1]]
+        # bulk_create = Registration.objects.bulk_create(reg_list, ignore_conflicts=True)
+     
+    with open("C:/Users/PC/Desktop/New folder/data_export_10_05_2023/t_registrations_with_JAMB_NUMBER.json") as f:
+        jamb_no = json.load(f)
+
+    with open("C:/Users/PC/Desktop/New folder/data_export_10_05_2023/t_registrations_with_MATRIC_NUMBER.json") as f:
+        mat_no = json.load(f)
+
+    return Response({'jamb_no':len(jamb_no), 'mat_no':len(mat_no)})
+
+
 @api_view(['GET', 'POST'])
 def correct_prog_dpt_diff(request):
     with open("C:/Users/PC/Downloads/t_departments (1).json") as f:
@@ -28,23 +54,27 @@ def correct_prog_dpt_diff(request):
 @login_required(login_url='index')
 @api_view(['GET', 'POST'])
 def loadRegistrationsJson(request):   
-    # return Response({'data':''}) 
-    # with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/t_registrations.json") as f:
+  
     jamb_no_list = []
-    with open("C:/Users/PC/Desktop/New folder/data_export_13_12_2022/t_registrations.json") as f:
+    with open("C:/Users/PC/Desktop/New folder/data_export_10_05_2023/t_registrations_with_MATRIC_NUMBER.json") as f:
         records = json.load(f)
-        settings = session_semester_config()
-        reg_list = [Registration(
-        matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']),course_code = reg['s_course_code'],
-        semester = settings.semester_code,session_id = settings.session, unit = reg['s_course_unit'],
-        score = -1, status = reg['s_course_status'] ,level = reg['registration_level'],
-        unit_id = reg['s_course_id'].split('*')[1]
-        )
-         for reg in records[:1]]
+        # settings = session_semester_config()
+        # reg_list = [Registration(
+        # matric_number_fk= Student.objects.get(matric_number = reg['s_matric_number']),
+        # course_code = reg['s_course_code'],
+        # semester = settings.semester_code,
+        # session_id = settings.session, 
+        # unit = reg['s_course_unit'],
+        # score = -1, 
+        # status = reg['s_course_status'] ,
+        # level = reg['registration_level'],
+        # unit_id = reg['s_course_id'].split('*')[1]
+        # )
+        #  for reg in records]
         # bulk_create = Registration.objects.bulk_create(reg_list, ignore_conflicts=True)
      
     
-    return Response({'data':records[0:4]})
+    return Response({'data':len(records)})
 
 
 # @login_required(login_url='index')
