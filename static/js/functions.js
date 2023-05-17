@@ -211,8 +211,10 @@ $(document).ready(function ($) {
       return "B";
     } else if (score < 60 && score > 49) {
       return "C";
-    } else if (score < 50 && score > 39) {
+    } else if (score < 50 && score > 44) {
       return "D";
+    } else if (score < 45 && score > 39) {
+      return "E";
     } else {
       return "F";
     }
