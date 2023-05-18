@@ -33,6 +33,10 @@
                                                             <div class="mb-2">
                                                                 <a href="#" data-bs-toggle="modal" data-bs-target="#retroactive" class="btn bg-secondary text-light btn-lg lift">Retroactive Registration</a>
                                                             </div>
+
+                                                            <div class="mb-2">
+                                                                <a href="#" data-bs-toggle="modal" data-bs-target="#resultupload" class="btn bg-primary text-light btn-lg lift">Upload Result</a>
+                                                            </div>
                                                         </div> 
                                                     </div>
                                                 </div>
@@ -56,7 +60,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title  fw-bold" id="retroactiveLabel">Retroactive Registration/h5>
+                    <h5 class="modal-title  fw-bold" id="retroactiveLabel">Retroactive Registration</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -111,6 +115,39 @@
                             </div>
                             <div class="mb-2">
                                 <button type="submit" class="btn bg-secondary text-light btn-lg lift">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="retroactive" tabindex="-1" aria-labelledby="retroactiveLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title  fw-bold" id="retroactiveLabel">Result Upload</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <form id="formAdminUpload" method="post">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                <select class="form-control form-control-md" name="course_code" id="course_code" required>
+                                    <option value="">Select Course</option>
+                                    <option value="GST 101">GST 101</option>
+                                    <option value="GST 103">GST 103</option>
+                                    <option value="GST 105">GST 105</option>
+                                    <option value="GST 109">GST 109</option>
+                                </select>
+                            </div>                                                            
+                            <div class="mb-2">
+                                <input type="file" class="form-control form-control-md" accept=".xlsx, .xls, .csv" name="course_file" required>
+                            </div>
+                            <div class="mb-2">
+                                <button type="submit" id="btnAdminUpload" class="btn bg-secondary text-light btn-lg lift">Upload</button>
                             </div>
                         </form>
                     </div>

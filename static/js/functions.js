@@ -355,4 +355,31 @@ $(document).ready(function ($) {
       },
     });
   });
+
+  $("#formAdminUpload").on("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    $.ajax({
+      type: "POST",
+      url: "/ug/api/mass-submit-student-reg-score",
+      data: formData,
+      dataType: "json",
+      contentType: false,
+      cache: false,
+      processData: false,
+      beforeSend: function () {
+        $("#btnAdminUpload").html('<i class="fa fa-spinner fa-spin"></i>');
+      },
+      success: function (response) {
+        console.log(response);
+        $("#btnAdminUpload").html("Upload");
+        alert(response.message);
+      },
+      error: function (response) {
+        console.log(response);
+        alert(response.responseJSON.message);
+        $("#btnAdminUpload").html("Upload");
+      },
+    });
+  });
 });
