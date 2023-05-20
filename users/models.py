@@ -96,7 +96,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return False
     @property
     def user_roles_la(self):
-        if self.role.get(str(self.semester_session_id.id))  is not None:
+        if self.role.get(str(self.semester_session_id.id))  is not None :
             return self.Role.LA in self.role.get(str(self.semester_session_id.id)) # Level Adviser
         return False
     @property

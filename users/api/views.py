@@ -42,24 +42,43 @@ def check_user_role_for_semester(request):
         else:
             return Response( {'status':'failed','message':'Unkown status','data':''}, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'POST':
+        owner = LogUserRoleForSemester.objects.filter(owner=request.user, semester_session=session_semester_config()).first()
+        prog = ""
+        dpt = ""
         if request.data['department']:
             dpt= Department.objects.filter(id=request.data['department']).first().id  
-            prog= Programme.objects.filter(department_id = dpt).first().id
+            prog= Programme.objects.filter(department_id = dpt).first().id 
         elif request.data['programme']:
-             prog= request.data.get('programme').split('*')[0] 
+             prog= Programme.objects.filter(id = request.data.get('programme').split('*')[0] ).first().id 
              dpt= Department.objects.filter(id=request.data.get('programme').split('*')[1]).first().id   
-        serializer = UserRolesLoggerSerializer(data = {  
-        "roles" : {session_semester_config().id: request.data.getlist('roles[]') or None},
-        "programme": prog,
-        "department": dpt,
-        "semester_session": session_semester_config().id or None,
-        "owner": request.user.email or None
-         })
-        if serializer.is_valid():
-            serializer.save()
-            # send email notification to the HOD
+        if owner is None:     
+            serializer = UserRolesLoggerSerializer(data = {  
+            "roles" : {session_semester_config().id: request.data.getlist('roles[]') or None},
+            "level_advising" : request.data["level"] if request.data["level"] else None,
+            "programme": prog,
+            "department": dpt,
+            "semester_session": session_semester_config().id or None,
+            "owner": request.user.email or None
+            })
+            if serializer.is_valid():
+                serializer.save()
+                # send email notification to the HOD
+                return Response({'status':'success','message':'roles created!','data':''}, status=status.HTTP_200_OK)
+            return Response(serializer.errors)
+        elif owner:
+            if request.data['department']:
+                dpt= Department.objects.filter(id=request.data['department']).first()  
+                prog= Programme.objects.filter(department_id = dpt).first()
+            elif request.data['programme']:
+                prog= Programme.objects.filter(id = request.data.get('programme').split('*')[0] ).first()
+                dpt= Department.objects.filter(id=request.data.get('programme').split('*')[1]).first()  
+            owner.roles = {session_semester_config().id: request.data.getlist('roles[]') or None}
+            owner.level_advising = request.data["level"] if request.data["level"] else None
+            owner.programme = prog
+            owner.department = dpt
+            owner.semester_session = session_semester_config() or None
+            owner.save()
             return Response({'status':'success','message':'roles created!','data':''}, status=status.HTTP_200_OK)
-        return Response(serializer.errors)
     if request.method == 'PUT':
         obj = LogUserRoleForSemester.objects.filter(owner=request.user, semester_session=session_semester_config()).first()
         serializer = UserRolesLoggerSerializer(obj, data={  
@@ -74,6 +93,12 @@ def check_user_role_for_semester(request):
              # send email notification to the HOD
             return Response({'status':'success','message':'roles updated!','data':serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors)
+        
+        
+        
+        #########################################
+        
+        
         # if owner is None:
         #     return Response({'status':'failed','message':'Are you accessing previous semester?','data':''}, status=status.HTTP_204_NO_CONTENT)
         # elif owner is not None and owner.role_status == 'PENDING':
