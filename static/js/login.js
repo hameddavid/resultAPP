@@ -30,6 +30,10 @@ $(document).ready(function ($) {
               setTimeout(function () {
                 window.location.href = "otp";
               }, 1500);
+            } else if (response.url === "otp_sent") {
+              setTimeout(function () {
+                window.location.href = "otp";
+              }, 1500);
             } else {
               setTimeout(function () {
                 window.location.href = "user/dashboard";

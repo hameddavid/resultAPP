@@ -7,6 +7,7 @@ $(document).ready(function ($) {
   $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
 
   $(".dept").hide();
+  $(".level").hide();
 
   $("#hod").change(function () {
     if (this.checked) {
@@ -25,8 +26,10 @@ $(document).ready(function ($) {
   $("#adviser").change(function () {
     if (this.checked) {
       $(".officer").hide();
+      $(".level").show();
     } else {
       $(".officer").show();
+      $(".level").hide();
     }
   });
 
@@ -208,8 +211,10 @@ $(document).ready(function ($) {
       return "B";
     } else if (score < 60 && score > 49) {
       return "C";
-    } else if (score < 50 && score > 39) {
+    } else if (score < 50 && score > 44) {
       return "D";
+    } else if (score < 45 && score > 39) {
+      return "E";
     } else {
       return "F";
     }
@@ -347,6 +352,33 @@ $(document).ready(function ($) {
         console.log(response);
         alert(response.responseJSON.message);
         $("#btnMassUpload").html("Upload");
+      },
+    });
+  });
+
+  $("#formAdminUpload").on("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    $.ajax({
+      type: "POST",
+      url: "/ug/api/mass-submit-student-reg-score",
+      data: formData,
+      dataType: "json",
+      contentType: false,
+      cache: false,
+      processData: false,
+      beforeSend: function () {
+        $("#btnAdminUpload").html('<i class="fa fa-spinner fa-spin"></i>');
+      },
+      success: function (response) {
+        console.log(response);
+        $("#btnAdminUpload").html("Upload");
+        alert(response.message);
+      },
+      error: function (response) {
+        console.log(response);
+        alert(response.responseJSON.message);
+        $("#btnAdminUpload").html("Upload");
       },
     });
   });
